@@ -1,0 +1,10 @@
+project_id = "rizumeeeqojhxhaskbmx"
+
+[functions.kit-enroll]
+verify_jwt = false
+
+[functions.zoom-sync]
+verify_jwt = false
+
+[functions.zoom-register]
+verify_jwt = false

@@ -1,0 +1,13 @@
+node_modules
+dist
+.env
+.env.local
+.env.server
+.env.*.local
+.DS_Store
+*.log
+.vite
+supabase/.temp
+design/_handoff
+design/_logos
+.env.functions
