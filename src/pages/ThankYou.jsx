@@ -28,7 +28,9 @@ export default function ThankYou() {
 
   if (!c) return <div className="page-loading">Loading…</div>;
 
-  const embed = toEmbed(c.video_url);
+  const mediaType = c.hero_media_type || "video";
+  const mediaUrl = c.hero_media_url || c.video_url || "";
+  const embed = toEmbed(mediaUrl);
   const when = formatEvent(event);
 
   return (
@@ -44,10 +46,12 @@ export default function ThankYou() {
             </p>
           )}
           <div className="ty-video">
-            {embed ? (
+            {mediaType === "image" && mediaUrl ? (
+              <img src={mediaUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : embed ? (
               <iframe src={embed} title="Welcome video" allow="autoplay; fullscreen; picture-in-picture" />
             ) : (
-              <div className="ty-video-ph">▶ Welcome video</div>
+              <div className="ty-video-ph">▶ {mediaType === "image" ? "Image" : "Welcome video"}</div>
             )}
           </div>
         </div>

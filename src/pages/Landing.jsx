@@ -4,10 +4,10 @@ import SiteFooter from "../components/SiteFooter.jsx";
 import LogoBar from "../components/LogoBar.jsx";
 import Testimonials from "../components/Testimonials.jsx";
 import MeetupProof from "../components/MeetupProof.jsx";
-import SignupModal from "../components/SignupModal.jsx";
+import RegistrationForm from "../components/RegistrationForm.jsx";
 import { Portrait, SectionHead, Button } from "../components/ui.jsx";
 import { getContent, getNextEvents } from "../lib/api.js";
-import { toEmbed, formatEvent } from "../lib/format.js";
+import { toEmbed, formatEvent, formatRange } from "../lib/format.js";
 
 // ---- Spec defaults. CMS (content_blocks) overrides any key that exists. ----
 const PROBLEMS = [
@@ -34,7 +34,6 @@ const YOU_GET = [
   "Recruiter-ready résumé & LinkedIn fixes",
   "The Mission Card operating template",
 ];
-// DRAFT bios inspired by jobhackers.global — ⟨USER⟩ to finalise.
 const PRESENTERS = [
   { name: "David Perry", src: "/assets/founder-david-perry.jpeg",
     bio: "Co-host and co-creator of the JobHackers playbook. A legendary recruiter and author of \"Guerrilla Marketing for Job Hunters,\" he's helped thousands crack the hidden job market and get hired faster." },
@@ -42,11 +41,16 @@ const PRESENTERS = [
     bio: "Co-founder of JobHackers Global. Laurent turned a proven 60-day roadmap into the live cohort that's helped members land roles they love — often with double-digit salary increases." },
 ];
 
+function HeroMedia({ type, url }) {
+  const embed = toEmbed(url);
+  if (type === "image" && url) return <img className="whero__media-img" src={url} alt="" />;
+  if (embed) return <iframe src={embed} title="Workshop intro" allow="autoplay; fullscreen; picture-in-picture" />;
+  return <span className="whero__video-ph">▶ {type === "image" ? "Image" : "Workshop intro"}</span>;
+}
+
 export default function Landing() {
   const [c, setC] = useState(null);
   const [events, setEvents] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [startIdx, setStartIdx] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -62,50 +66,52 @@ export default function Landing() {
 
   const T = (k, def) => (c[k] && c[k].length ? c[k] : def);
   const cta = T("cta_label", "Save My Seat");
-  const openModal = (i = 0) => { setStartIdx(i); setOpen(true); };
-  const embed = toEmbed(c.video_url);
-  const liveWhen = formatEvent(events[0]);
+  const scrollToReg = () => document.getElementById("register")?.scrollIntoView({ behavior: "smooth", block: "center" });
 
-  // structural lists, overlaid with CMS keys where present
   const problems = PROBLEMS.map((p, i) => ({ t: T(`problem_${i + 1}_title`, p.t), d: T(`problem_${i + 1}_desc`, p.d) }));
   const audience = AUDIENCE.map((a, i) => ({ t: T(`who_${i + 1}_title`, a.t), d: T(`who_${i + 1}_desc`, a.d), e: T(`who_${i + 1}_em`, a.e) }));
   const method = METHOD.map((m, i) => ({ t: T(`method_${i + 1}_title`, m.t), d: T(`method_${i + 1}_desc`, m.d) }));
   const youGet = YOU_GET.map((g, i) => T(`get_${i + 1}`, g));
 
+  const mediaType = T("hero_media_type", "video");
+  const mediaUrl = c.hero_media_url || c.video_url || "";
+
   return (
     <>
-      <SiteHeader onRegister={openModal} ctaLabel={cta} />
+      <SiteHeader onRegister={scrollToReg} ctaLabel={cta} />
 
-      {/* 1 — HERO */}
+      {/* 1 — HERO (centered head · media + sessions left · form right) */}
       <section className="whero">
-        <img className="whero__hand-bg" src="/assets/logo-hand.png" alt="" />
         <div className="container">
+          <div className="whero__head center">
+            <div className="whero__tagline">{T("hero_eyebrow", "The New Rules of Getting Hired Masterclass")}</div>
+            <h1 className="whero__h1">{T("hero_title", "You Did Everything Right. The Rules Changed Anyway.")}</h1>
+            <p className="whero__sub">
+              {T("hero_subtitle",
+                "The free fortnightly masterclass for professionals who are stuck — whether you're job hunting, changing careers, or chasing the promotion you've earned. With David Perry & Laurent Simon.")}
+            </p>
+          </div>
+
           <div className="whero__grid">
-            <div>
-              <div className="whero__tagline">{T("hero_eyebrow", "The New Rules of Getting Hired Masterclass")}</div>
-              <h1 className="whero__h1">{T("hero_title", "You Did Everything Right. The Rules Changed Anyway.")}</h1>
-              <p className="whero__sub">
-                {T("hero_subtitle",
-                  "The free fortnightly masterclass for professionals who are stuck — whether you're job hunting, changing careers, or chasing the promotion you've earned. Learn how to get understood and chosen in a job market that quietly rewrote the rules. With David Perry & Laurent Simon.")}
-              </p>
-              <ul className="whero__benefits">
-                <li><span className="tick">✓</span>{T("benefit_1", "Get a clear lane the market understands in seconds")}</li>
-                <li><span className="tick">✓</span>{T("benefit_2", "Turn your experience into proof that gets you chosen")}</li>
-                <li><span className="tick">✓</span>{T("benefit_3", "Walk away with a system — not just more applications")}</li>
-              </ul>
-              <div className="whero__prize">🎁 {T("hero_prize", "Live on the call: one attendee gets a free résumé + LinkedIn teardown.")}</div>
-              <div style={{ marginTop: 22 }}>
-                <Button variant="primary" size="lg" onClick={openModal}>{cta} →</Button>
-              </div>
+            <div className="whero__left">
+              <div className="whero__media"><HeroMedia type={mediaType} url={mediaUrl} /></div>
+              {events.length > 0 && (
+                <div className="sessions">
+                  {events.slice(0, 2).map((ev, i) => {
+                    const w = formatEvent(ev);
+                    return (
+                      <div className="session" key={ev.id || i}>
+                        <div className="session__k">{i === 0 ? "NEXT SESSION:" : "FUTURE SESSION:"}</div>
+                        <div className="session__date">{w?.date}</div>
+                        <div className="session__time">{formatRange(ev)}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-            <div>
-              <div className="whero__video">
-                {embed ? (
-                  <iframe src={embed} title="Masterclass intro" allow="autoplay; fullscreen; picture-in-picture" />
-                ) : (
-                  <span className="whero__video-ph">▶ Masterclass intro</span>
-                )}
-              </div>
+            <div className="whero__right">
+              <RegistrationForm events={events} content={c} dark />
             </div>
           </div>
         </div>
@@ -213,43 +219,11 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 9 — DATE / TIME / LOCATION (nearest two) */}
-      <section className="section" id="dates">
-        <div className="container">
-          <SectionHead title="Save the Date" lede="Pick the session that suits you — it runs every fortnight." />
-          {events.length > 0 ? (
-            <div className="when-grid">
-              {events.map((ev, i) => {
-                const w = formatEvent(ev);
-                return (
-                  <div className="when-card" key={ev.id || i}>
-                    <div className="when-card__when">
-                      <div className="when-card__v">{w?.date}</div>
-                      <div className="when-card__t">{w?.time} <span className="muted">({w?.tz})</span></div>
-                      <div className="when-card__loc">{T("event_location", "Online · Zoom")}</div>
-                    </div>
-                    <Button variant="primary" block onClick={() => openModal(i)}>{cta} →</Button>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="when-card" style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
-              <div className="when-card__v">{T("event_date", "Wed 19 August 2026")}</div>
-              <div className="when-card__t">{T("event_time", "9:00 AM NZST")} · {T("event_location", "Online · Zoom")}</div>
-              <div className="tz-table">9:00 AM NZ · 7:00 AM Sydney · Tue 5:00 PM ET · Tue 2:00 PM PT</div>
-              <Button variant="primary" size="lg" onClick={() => openModal(0)}>{cta} →</Button>
-            </div>
-          )}
-          <div className="recur-note center">Can't make either? Register and we'll see you at the next fortnightly session.</div>
-        </div>
-      </section>
-
-      {/* 10 — TESTIMONIALS + Meetup rating proof */}
+      {/* 9 — TESTIMONIALS + Meetup rating proof */}
       <Testimonials />
       <MeetupProof />
 
-      {/* 11 — BUSINESS FOR GOOD */}
+      {/* 10 — BUSINESS FOR GOOD */}
       <section className="section">
         <div className="container center">
           <SectionHead title={T("biz_heading", "Business for Good")} />
@@ -260,20 +234,18 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 12 — TAKE ACTION */}
+      {/* 11 — TAKE ACTION */}
       <section className="section section--dark center">
         <div className="container">
           <h2 className="section__title">{T("action_statement_title", "The market changed the rules. Learn the new ones.")}</h2>
           <p className="section__lede" style={{ marginBottom: 28 }}>
             {T("action_statement", "Hope is not a strategy. Drift is not a strategy. Volume is not a strategy. Your next session starts soon.")}
           </p>
-          <Button variant="primary" size="lg" onClick={openModal}>{cta} →</Button>
+          <Button variant="primary" size="lg" onClick={scrollToReg}>{cta} →</Button>
         </div>
       </section>
 
       <SiteFooter />
-
-      {open && <SignupModal events={events} initialIndex={startIdx} content={{ ...c, cta_label: cta }} onClose={() => setOpen(false)} />}
     </>
   );
 }

@@ -93,7 +93,7 @@ export function webinarRsvpTag(event) {
 export const QUIZ_TAG = "EVENT->ANSWER->WEBINAR-QUIZ";
 
 /** Step 1 — record the RSVP (acquisition) event. Returns event row id. */
-export async function registerLead({ first_name, last_name, email, location, source, tag }) {
+export async function registerLead({ first_name, last_name, email, location, phone, source, tag }) {
   const { data, error } = await supabase.rpc("register_lead", {
     p_first_name: first_name,
     p_last_name: last_name || null,
@@ -101,6 +101,7 @@ export async function registerLead({ first_name, last_name, email, location, sou
     p_tag: tag,
     p_source: source || null,
     p_location: location || null,
+    p_phone: phone || null,
   });
   if (error) throw error;
   return data; // uuid
