@@ -53,6 +53,7 @@ export default function Landing() {
   const [c, setC] = useState(null);
   const [events, setEvents] = useState([]);
   const [open, setOpen] = useState(false);
+  const [startIdx, setStartIdx] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -68,7 +69,7 @@ export default function Landing() {
 
   const T = (k, def) => (c[k] && c[k].length ? c[k] : def);
   const cta = T("cta_label", "Save My Seat");
-  const openModal = () => setOpen(true);
+  const openModal = (i = 0) => { setStartIdx(i); setOpen(true); };
 
   const problems = PROBLEMS.map((p, i) => ({ t: T(`problem_${i + 1}_title`, p.t), d: T(`problem_${i + 1}_desc`, p.d) }));
   const audience = AUDIENCE.map((a, i) => ({ t: T(`who_${i + 1}_title`, a.t), d: T(`who_${i + 1}_desc`, a.d), e: T(`who_${i + 1}_em`, a.e) }));
@@ -221,6 +222,36 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* 8b — SAVE THE DATE (pick a session) */}
+      <section className="section" id="dates">
+        <div className="container">
+          <SectionHead title="Save the Date" lede="Pick the session that suits you — it runs every fortnight." />
+          {events.length > 0 ? (
+            <div className="when-grid">
+              {events.map((ev, i) => {
+                const w = formatEvent(ev);
+                return (
+                  <div className="when-card" key={ev.id || i}>
+                    <div className="when-card__when">
+                      <div className="when-card__v">{w?.date}</div>
+                      <div className="when-card__t">{formatRange(ev)}</div>
+                      <div className="when-card__loc">{T("event_location", "Online · Zoom")}</div>
+                    </div>
+                    <Button variant="primary" block onClick={() => openModal(i)}>{cta} →</Button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="when-card" style={{ maxWidth: 480, margin: "0 auto", textAlign: "center" }}>
+              <div className="when-card__v">{T("event_date", "TBA")}</div>
+              <Button variant="primary" size="lg" onClick={() => openModal(0)}>{cta} →</Button>
+            </div>
+          )}
+          <div className="recur-note center">Can't make either? Register and we'll see you at the next fortnightly session.</div>
+        </div>
+      </section>
+
       {/* 9 — TESTIMONIALS + Meetup rating proof */}
       <Testimonials />
       <MeetupProof />
@@ -249,7 +280,7 @@ export default function Landing() {
 
       <SiteFooter />
 
-      {open && <SignupModal events={events} content={c} onClose={() => setOpen(false)} />}
+      {open && <SignupModal events={events} content={c} initialIndex={startIdx} onClose={() => setOpen(false)} />}
     </>
   );
 }
