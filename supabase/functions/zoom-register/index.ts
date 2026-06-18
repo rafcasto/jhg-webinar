@@ -1,6 +1,7 @@
 // Edge Function: zoom-register
-// Binds a registrant to the specific occurrence (date) they chose.
-// Backs: POST /meetings/{meetingId}/registrants?occurrence_ids={occurrence_id}
+// Registers the lead for the webinar. Tries to bind them to the specific
+// occurrence (date) they chose; if the meeting's registration type rejects
+// occurrence binding, falls back to a standard registration (register once).
 // Scope: meeting:write:registrant:admin
 //
 // Secrets: ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET
@@ -24,24 +25,33 @@ async function zoomToken(): Promise<string> {
   return (await r.json()).access_token;
 }
 
+async function addRegistrant(token: string, meetingId: string, occ: string | null, body: unknown) {
+  const qs = occ ? `?occurrence_ids=${occ}` : "";
+  const r = await fetch(`https://api.zoom.us/v2/meetings/${meetingId}/registrants${qs}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return { ok: r.ok, status: r.status, data: await r.json() };
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
     const { meeting_id, occurrence_id, email, first_name, last_name } = await req.json();
-    if (!meeting_id || !occurrence_id || !email) return json({ error: "meeting_id, occurrence_id, email required" }, 400);
+    if (!meeting_id || !email) return json({ error: "meeting_id and email required" }, 400);
 
     const token = await zoomToken();
-    const url = `https://api.zoom.us/v2/meetings/${meeting_id}/registrants?occurrence_ids=${occurrence_id}`;
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ email, first_name: first_name || email.split("@")[0], last_name: last_name || "-" }),
-    });
-    const data = await r.json();
-    if (!r.ok) return json({ error: "zoom_register_failed", detail: data }, r.status);
+    const body = { email, first_name: first_name || email.split("@")[0], last_name: last_name || "-" };
 
-    // data.join_url is this registrant's personal join link for the chosen date
-    return json({ ok: true, join_url: data.join_url, registrant_id: data.registrant_id });
+    // 1) try to bind to the chosen occurrence
+    let res = occurrence_id ? await addRegistrant(token, meeting_id, occurrence_id, body) : { ok: false };
+    let bound = res.ok;
+    // 2) fallback: standard registration (works for register-once meetings)
+    if (!res.ok) res = await addRegistrant(token, meeting_id, null, body);
+
+    if (!res.ok) return json({ error: "zoom_register_failed", detail: res.data }, res.status || 500);
+    return json({ ok: true, occurrence_bound: bound, join_url: res.data.join_url, registrant_id: res.data.registrant_id });
   } catch (e) {
     return json({ error: String(e) }, 500);
   }

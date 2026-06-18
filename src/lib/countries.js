@@ -44,3 +44,32 @@ export function flagEmoji(code) {
 export const COUNTRIES = DIAL
   .map(([code, dial]) => ({ code, dial, name: countryName(code), flag: flagEmoji(code) }))
   .sort((a, b) => a.name.localeCompare(b.name));
+
+/** Best-effort country code from the browser locale (instant, offline). */
+export function localeCountry() {
+  try {
+    const langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+    for (const l of langs) {
+      const region = new Intl.Locale(l).maximize().region;
+      if (region && COUNTRIES.some((c) => c.code === region)) return region;
+    }
+  } catch { /* ignore */ }
+  return null;
+}
+
+/** Detect the visitor's country: IP lookup first, locale fallback. */
+export async function detectCountry() {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 2500);
+    const res = await fetch("https://ipapi.co/country/", { signal: ctrl.signal });
+    clearTimeout(t);
+    if (res.ok) {
+      const code = (await res.text()).trim().toUpperCase();
+      if (/^[A-Z]{2}$/.test(code) && COUNTRIES.some((c) => c.code === code)) return code;
+    }
+  } catch { /* ignore */ }
+  return localeCountry();
+}
+
+export const dialFor = (code) => (COUNTRIES.find((c) => c.code === code)?.dial || "");

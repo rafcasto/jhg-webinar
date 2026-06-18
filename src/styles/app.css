@@ -466,3 +466,30 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 /* registration form rendered inside the modal (no double card chrome) */
 .reg-card--plain { border: 0; box-shadow: none; padding: 0; background: transparent; }
 .reg-card--plain h3 { text-align: left; }
+
+/* ---------- Searchable country select + phone prefix ---------- */
+.phone-row { grid-template-columns: auto 1fr !important; }
+.phone-prefix { display: flex; align-items: center; padding: 0 14px; border: 1.5px solid var(--jh-line-2);
+  border-radius: 10px; background: var(--jh-mist); color: var(--jh-ink); font-size: 15px;
+  font-family: var(--font-display); font-weight: 600; white-space: nowrap; }
+
+.cselect { position: relative; }
+.cselect__btn { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-body); font-size: 15px; padding: 12px 14px; border: 1.5px solid var(--jh-line-2);
+  border-radius: 10px; background: #fff; color: var(--jh-ink); cursor: pointer; }
+.cselect__btn:hover { border-color: var(--jh-red); }
+.cselect__ph { color: var(--fg-4); }
+.cselect__chev { color: var(--fg-3); }
+.cselect__panel { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; right: 0; background: #fff;
+  border: 1px solid var(--jh-line); border-radius: 12px; box-shadow: var(--shadow-3); padding: 8px; }
+.cselect__search { width: 100%; padding: 10px 12px; border: 1.5px solid var(--jh-line-2); border-radius: 8px;
+  font-size: 14px; margin-bottom: 6px; outline: none; box-sizing: border-box; }
+.cselect__search:focus { border-color: var(--jh-red); }
+.cselect__list { max-height: 240px; overflow-y: auto; }
+.cselect__opt { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  padding: 9px 10px; border: 0; background: transparent; cursor: pointer; font-size: 14px; color: var(--jh-ink);
+  border-radius: 8px; text-align: left; }
+.cselect__opt:hover { background: var(--jh-mist); }
+.cselect__opt.is-selected { background: var(--jh-red-soft); color: var(--jh-red); }
+.cselect__dial { color: var(--fg-3); font-size: 13px; }
+.cselect__empty { padding: 12px; color: var(--fg-3); font-size: 14px; text-align: center; }

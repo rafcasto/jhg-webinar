@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui.jsx";
+import CountrySelect from "./CountrySelect.jsx";
 import { registerLead, enrollInKit, zoomRegister, readSource, webinarRsvpTag } from "../lib/api.js";
 import { formatEvent } from "../lib/format.js";
-import { COUNTRIES, countryName } from "../lib/countries.js";
+import { countryName, dialFor, localeCountry, detectCountry } from "../lib/countries.js";
 
 const DEFAULT_DISCLAIMER =
   "By opting in, you agree to receive logistics and marketing communications about this event via email and SMS, as well as occasional marketing messages via SMS and WhatsApp. Standard rates may apply. You can opt out at any time by replying STOP to SMS or WhatsApp messages.";
@@ -11,27 +12,31 @@ const DEFAULT_DISCLAIMER =
 export default function RegistrationForm({ events = [], content = {}, dark = false, plain = false, id, defaultSessionIdx = 0, onDone }) {
   const navigate = useNavigate();
   const [f, setF] = useState({
-    first_name: "", last_name: "", email: "",
-    dial: "44", phone: "",
+    first_name: "", last_name: "", email: "", phone: "",
     session: events.length ? String(defaultSessionIdx) : "",
-    country: "GB",
+    country: localeCountry() || "GB",
   });
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const touchedCountry = useRef(false);
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }));
 
-  const onCountry = (e) => {
-    const code = e.target.value;
-    const c = COUNTRIES.find((x) => x.code === code);
-    setF((s) => ({ ...s, country: code, dial: c ? c.dial : s.dial }));
-  };
+  // auto-detect country (IP → locale) unless the user already picked one
+  useEffect(() => {
+    let alive = true;
+    detectCountry().then((code) => {
+      if (alive && code && !touchedCountry.current) setF((s) => ({ ...s, country: code }));
+    });
+    return () => { alive = false; };
+  }, []);
+
+  const dial = dialFor(f.country) || "44";
 
   async function submit(e) {
     e.preventDefault();
     setErr("");
     if (!f.first_name.trim()) return setErr("Please enter your first name.");
     if (!f.email.includes("@")) return setErr("Please enter a valid email.");
-    if (!f.phone.trim()) return setErr("Please enter your mobile number.");
     if (events.length && f.session === "") return setErr("Please select a session.");
     if (!f.country) return setErr("Please select your location.");
 
@@ -43,7 +48,7 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
         last_name: f.last_name,
         email: f.email,
         location: countryName(f.country),
-        phone: `+${f.dial} ${f.phone.trim()}`,
+        phone: f.phone.trim() ? `+${dial} ${f.phone.trim()}` : null,
         source: readSource(),
         tag: webinarRsvpTag(chosen),
       });
@@ -77,14 +82,10 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
         <div className="field"><input type="email" value={f.email} onChange={set("email")} placeholder="Email *" required /></div>
 
         <div className="field">
-          <label className="field-mini">Mobile *</label>
+          <label className="field-mini">Mobile (optional)</label>
           <div className="phone-row">
-            <select value={f.dial} onChange={set("dial")} aria-label="Country code">
-              {COUNTRIES.map((c) => (
-                <option key={c.code} value={c.dial}>{c.flag} +{c.dial}</option>
-              ))}
-            </select>
-            <input type="tel" value={f.phone} onChange={set("phone")} placeholder="07400 123456" required />
+            <span className="phone-prefix">+{dial}</span>
+            <input type="tel" value={f.phone} onChange={set("phone")} placeholder="7400 123456" />
           </div>
         </div>
 
@@ -102,10 +103,10 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
 
         <div className="field">
           <label className="field-mini">Where are you located? *</label>
-          <select value={f.country} onChange={onCountry} required>
-            <option value="" disabled>Select your country…</option>
-            {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.flag} {c.name}</option>)}
-          </select>
+          <CountrySelect
+            value={f.country}
+            onChange={(code) => { touchedCountry.current = true; setF((s) => ({ ...s, country: code })); }}
+          />
         </div>
 
         <Button variant="primary" size="lg" block disabled={busy}>
