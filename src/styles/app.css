@@ -365,3 +365,60 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 .date-choice .radio { width: 18px; height: 18px; border-radius: 999px; border: 2px solid var(--jh-line-2); flex-shrink: 0; }
 .date-choice.is-selected .radio { border-color: var(--jh-red); box-shadow: inset 0 0 0 4px var(--jh-red); }
 @media (max-width: 640px) { .when-grid { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   16. Admin v2 — tabbed dashboard (Scorecard-style)
+============================================================ */
+.adm { min-height: 100vh; background: var(--jh-paper); }
+.adm-top { background: var(--jh-ink); color: #fff; }
+.adm-top__in { max-width: 1180px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+.adm-top__brand { font-family: var(--font-display); font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+.adm-top__right { display: flex; align-items: center; gap: 20px; font-size: 14px; }
+.adm-top__right .email { color: rgba(255,255,255,.7); }
+.adm-top__right a, .adm-top__right button { color: #fff; background: none; border: 0; cursor: pointer;
+  font-family: var(--font-display); font-weight: 600; font-size: 14px; text-decoration: none; }
+.adm-top__right a:hover, .adm-top__right button:hover { color: var(--jh-red); }
+.adm-top__right a u { text-underline-offset: 3px; }
+
+.adm-tabsbar { background: #fff; border-bottom: 1px solid var(--jh-line); }
+.adm-tabs { max-width: 1180px; margin: 0 auto; padding: 0 24px; display: flex; gap: 28px; }
+.adm-tab { padding: 18px 2px; font-family: var(--font-display); font-weight: 600; font-size: 15px;
+  color: var(--fg-3); text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.adm-tab:hover { color: var(--fg-1); }
+.adm-tab.active { color: var(--jh-red); border-bottom-color: var(--jh-red); }
+
+.adm-main { max-width: 1180px; margin: 0 auto; padding: 28px 24px 96px; }
+.adm-h { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0 0 18px; }
+
+.adm-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
+.adm-stat { background: #fff; border: 1px solid var(--jh-line); border-radius: 14px; padding: 22px 24px; box-shadow: var(--shadow-1); }
+.adm-stat .num { font-family: var(--font-display); font-size: 38px; font-weight: 800; color: var(--jh-ink); line-height: 1; }
+.adm-stat .label { font-size: 13px; color: var(--fg-3); margin-top: 8px; }
+
+.adm-panel { background: #fff; border: 1px solid var(--jh-line); border-radius: 16px; padding: 28px; box-shadow: var(--shadow-1); margin-bottom: 22px; }
+.adm-panel__h { font-family: var(--font-display); font-size: 19px; font-weight: 700; margin: 0 0 18px; }
+.adm-grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.adm-mini { background: var(--jh-paper); border: 1px solid var(--jh-line); border-radius: 12px; padding: 20px 22px; }
+.adm-mini .num { font-family: var(--font-display); font-size: 30px; font-weight: 800; color: var(--jh-ink); line-height: 1; }
+.adm-mini .label { font-size: 13px; color: var(--fg-3); margin-top: 6px; }
+
+/* editable field rows */
+.adm-fieldset { display: flex; flex-direction: column; gap: 16px; }
+.adm-frow { display: grid; grid-template-columns: 240px 1fr; gap: 18px; align-items: start; }
+.adm-frow > label { font-family: var(--font-display); font-size: 13px; font-weight: 600; padding-top: 9px; color: var(--fg-1); }
+.adm-frow > label .k { display: block; font-weight: 400; color: var(--fg-4); font-size: 11px; margin-top: 2px; }
+.adm-sectlabel { font-family: var(--font-display); font-weight: 700; font-size: 14px; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--jh-red); margin: 8px 0 4px; }
+
+/* sticky save bar */
+.adm-savebar { position: sticky; bottom: 0; background: rgba(255,255,255,.95); backdrop-filter: blur(6px);
+  border-top: 1px solid var(--jh-line); margin: 28px -24px -96px; padding: 16px 24px; display: flex;
+  align-items: center; justify-content: flex-end; gap: 16px; }
+.adm-savebar .status { font-size: 13px; color: var(--fg-3); margin-right: auto; }
+.adm-savebar .status.ok { color: var(--rb-green-dark); }
+
+@media (max-width: 820px) {
+  .adm-stats, .adm-grid4 { grid-template-columns: repeat(2, 1fr); }
+  .adm-frow { grid-template-columns: 1fr; gap: 6px; }
+  .adm-tabs { overflow-x: auto; }
+}
