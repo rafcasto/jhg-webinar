@@ -6,6 +6,7 @@ import ContentEditor from "./ContentEditor.jsx";
 import LeadFormPanel from "./LeadFormPanel.jsx";
 import QuestionsPanel from "./QuestionsPanel.jsx";
 import ResultsPanel from "./ResultsPanel.jsx";
+import AdminLogin from "./AdminLogin.jsx";
 
 const TABS = [
   { to: "/admin", label: "Dashboard", end: true },
@@ -34,11 +35,11 @@ export default function AdminApp() {
 
   async function signOut() {
     await supabase.auth.signOut();
-    navigate("/admin/login");
+    navigate("/admin");
   }
 
   if (session === undefined) return <div className="page-loading">Loading…</div>;
-  if (!session) return <Navigate to="/admin/login" replace />;
+  if (!session) return <AdminLogin />;
   if (isAdmin === null) return <div className="page-loading">Checking access…</div>;
   if (isAdmin === false) {
     return (
