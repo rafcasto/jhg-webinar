@@ -8,7 +8,7 @@ import { COUNTRIES, countryName } from "../lib/countries.js";
 const DEFAULT_DISCLAIMER =
   "By opting in, you agree to receive logistics and marketing communications about this event via email and SMS, as well as occasional marketing messages via SMS and WhatsApp. Standard rates may apply. You can opt out at any time by replying STOP to SMS or WhatsApp messages.";
 
-export default function RegistrationForm({ events = [], content = {}, dark = false, defaultSessionIdx = 0 }) {
+export default function RegistrationForm({ events = [], content = {}, dark = false, plain = false, id, defaultSessionIdx = 0, onDone }) {
   const navigate = useNavigate();
   const [f, setF] = useState({
     first_name: "", last_name: "", email: "",
@@ -20,7 +20,6 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
   const [err, setErr] = useState("");
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }));
 
-  // keep dial in step with chosen country
   const onCountry = (e) => {
     const code = e.target.value;
     const c = COUNTRIES.find((x) => x.code === code);
@@ -39,7 +38,7 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
     const chosen = events[Number(f.session)] || null;
     setBusy(true);
     try {
-      const id = await registerLead({
+      const leadId = await registerLead({
         first_name: f.first_name,
         last_name: f.last_name,
         email: f.email,
@@ -48,13 +47,14 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
         source: readSource(),
         tag: webinarRsvpTag(chosen),
       });
-      sessionStorage.setItem("jhg_lead_id", id);
+      sessionStorage.setItem("jhg_lead_id", leadId);
       sessionStorage.setItem("jhg_email", f.email);
-      enrollInKit(id);
+      enrollInKit(leadId);
       if (chosen) zoomRegister({
         meeting_id: chosen.zoom_meeting_id, occurrence_id: chosen.occurrence_id,
         email: f.email, first_name: f.first_name, last_name: f.last_name,
       });
+      onDone?.();
       navigate("/quiz");
     } catch (e2) {
       console.error(e2);
@@ -63,8 +63,10 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
     }
   }
 
+  const cls = "reg-card" + (dark ? " reg-card--dark" : "") + (plain ? " reg-card--plain" : "");
+
   return (
-    <div className={"reg-card" + (dark ? " reg-card--dark" : "")} id="register">
+    <div className={cls} id={id}>
       <h3>{content.form_heading || "Seats are limited. Secure yours now."}</h3>
       {err && <div className="form-error">{err}</div>}
       <form onSubmit={submit}>

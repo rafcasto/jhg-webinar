@@ -462,3 +462,7 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
   .whero__grid { grid-template-columns: 1fr; gap: 32px; }
   .sessions { gap: 36px; }
 }
+
+/* registration form rendered inside the modal (no double card chrome) */
+.reg-card--plain { border: 0; box-shadow: none; padding: 0; background: transparent; }
+.reg-card--plain h3 { text-align: left; }

@@ -5,6 +5,7 @@ import LogoBar from "../components/LogoBar.jsx";
 import Testimonials from "../components/Testimonials.jsx";
 import MeetupProof from "../components/MeetupProof.jsx";
 import RegistrationForm from "../components/RegistrationForm.jsx";
+import SignupModal from "../components/SignupModal.jsx";
 import { Portrait, SectionHead, Button } from "../components/ui.jsx";
 import { getContent, getNextEvents } from "../lib/api.js";
 import { toEmbed, formatEvent, formatRange } from "../lib/format.js";
@@ -51,6 +52,7 @@ function HeroMedia({ type, url }) {
 export default function Landing() {
   const [c, setC] = useState(null);
   const [events, setEvents] = useState([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -66,7 +68,7 @@ export default function Landing() {
 
   const T = (k, def) => (c[k] && c[k].length ? c[k] : def);
   const cta = T("cta_label", "Save My Seat");
-  const scrollToReg = () => document.getElementById("register")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  const openModal = () => setOpen(true);
 
   const problems = PROBLEMS.map((p, i) => ({ t: T(`problem_${i + 1}_title`, p.t), d: T(`problem_${i + 1}_desc`, p.d) }));
   const audience = AUDIENCE.map((a, i) => ({ t: T(`who_${i + 1}_title`, a.t), d: T(`who_${i + 1}_desc`, a.d), e: T(`who_${i + 1}_em`, a.e) }));
@@ -78,7 +80,7 @@ export default function Landing() {
 
   return (
     <>
-      <SiteHeader onRegister={scrollToReg} ctaLabel={cta} />
+      <SiteHeader onRegister={openModal} ctaLabel={cta} />
 
       {/* 1 — HERO (centered head · media + sessions left · form right) */}
       <section className="whero">
@@ -111,7 +113,7 @@ export default function Landing() {
               )}
             </div>
             <div className="whero__right">
-              <RegistrationForm events={events} content={c} dark />
+              <RegistrationForm events={events} content={c} dark id="register" />
             </div>
           </div>
         </div>
@@ -241,11 +243,13 @@ export default function Landing() {
           <p className="section__lede" style={{ marginBottom: 28 }}>
             {T("action_statement", "Hope is not a strategy. Drift is not a strategy. Volume is not a strategy. Your next session starts soon.")}
           </p>
-          <Button variant="primary" size="lg" onClick={scrollToReg}>{cta} →</Button>
+          <Button variant="primary" size="lg" onClick={openModal}>{cta} →</Button>
         </div>
       </section>
 
       <SiteFooter />
+
+      {open && <SignupModal events={events} content={c} onClose={() => setOpen(false)} />}
     </>
   );
 }
