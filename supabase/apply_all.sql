@@ -1,5 +1,5 @@
 -- Combined schema for paste into Supabase SQL editor.
--- Fully idempotent: safe to run repeatedly. Generated from migrations/0001-0005.
+-- Fully idempotent: safe to run repeatedly. Generated from migrations/0001-0006.
 
 -- ============================================================
 -- JobHackers Global — Webinar Funnel schema
@@ -560,5 +560,24 @@ insert into content_blocks (page, key, label, type, value, position) values
   ('thankyou','hero_media_type','Hero media type (video|image)','text','video',100),
   ('thankyou','hero_media_url','Hero media URL (video or image)','url','',101)
 on conflict (page, key) do nothing;
+
+
+-- ============================================================
+-- Track the Kit countdown broadcasts created per occurrence+milestone
+-- so the dispatcher is idempotent (never double-creates).
+-- ============================================================
+create table if not exists public.webinar_broadcasts (
+  occurrence_id  text not null,
+  milestone      text not null,            -- '48h' | '24h' | '1h' | '15m'
+  broadcast_id   bigint,
+  status         text,                     -- 'draft' | 'scheduled'
+  send_at        timestamptz,
+  created_at     timestamptz not null default now(),
+  primary key (occurrence_id, milestone)
+);
+
+alter table public.webinar_broadcasts enable row level security;
+drop policy if exists "admin read bcasts" on public.webinar_broadcasts;
+create policy "admin read bcasts" on public.webinar_broadcasts for select to authenticated using (is_admin());
 
 

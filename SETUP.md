@@ -77,10 +77,26 @@ select cron.schedule('zoom-sync-postmeeting','0 0 * * 3', $$
 $$);
 ```
 
-## 5. Kit countdown sequence
+## 5. Kit countdown (event-anchored)
 
-Email copy: `emails/countdown-sequence.md` (Confirmation, 48h, 24h, 1h agenda,
-15m), anchored to the chosen event. Set `KIT_SEQUENCE_ID` once it exists in Kit.
+Kit's free plan has no automations, so reminders are sent as **scheduled
+broadcasts** — one per occurrence × milestone (−48h / −24h / −1h / −15m),
+targeted to that date's `EVENT->RSVP->WEBINAR-<date>` tag and anchored to the real
+start time. The immediate confirmation (join link) is sent by Zoom on registration.
+
+Function: `countdown-broadcasts` (deploy: `supabase functions deploy countdown-broadcasts`).
+- Run (draft, review in Kit):  POST `/functions/v1/countdown-broadcasts`
+- Go live (schedule sends):    POST `/functions/v1/countdown-broadcasts?reset=1&publish=1`
+- Keep fresh weekly (pairs with zoom-sync):
+```sql
+select cron.schedule('countdown-weekly','30 0 * * 3', $$
+  select net.http_post(
+    url:='https://rizumeeeqojhxhaskbmx.supabase.co/functions/v1/countdown-broadcasts?publish=1',
+    headers:='{"Content-Type":"application/json","apikey":"<publishable key>"}'::jsonb,
+    body:='{}'::jsonb);
+$$);
+```
+Copy for the emails lives in `emails/countdown-sequence.md`.
 
 ## Notes / still needed
 

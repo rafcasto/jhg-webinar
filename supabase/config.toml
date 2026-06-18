@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.zoom-register]
 verify_jwt = false
+
+[functions.countdown-broadcasts]
+verify_jwt = false
