@@ -9,7 +9,7 @@ import { countryName, dialFor, localeCountry, detectCountry } from "../lib/count
 const DEFAULT_DISCLAIMER =
   "By opting in, you agree to receive logistics and marketing communications about this event via email and SMS, as well as occasional marketing messages via SMS and WhatsApp. Standard rates may apply. You can opt out at any time by replying STOP to SMS or WhatsApp messages.";
 
-export default function RegistrationForm({ events = [], content = {}, dark = false, plain = false, id, defaultSessionIdx = 0, onDone }) {
+export default function RegistrationForm({ events = [], content = {}, variant = null, dark = false, plain = false, id, defaultSessionIdx = 0, onDone }) {
   const navigate = useNavigate();
   const [f, setF] = useState({
     first_name: "", last_name: "", email: "", phone: "",
@@ -51,6 +51,7 @@ export default function RegistrationForm({ events = [], content = {}, dark = fal
         phone: f.phone.trim() ? `+${dial} ${f.phone.trim()}` : null,
         source: readSource(),
         tag: webinarRsvpTag(chosen),
+        variant,
       });
       sessionStorage.setItem("jhg_lead_id", leadId);
       sessionStorage.setItem("jhg_email", f.email);

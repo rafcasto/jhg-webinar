@@ -6,12 +6,15 @@ import ContentEditor from "./ContentEditor.jsx";
 import LeadFormPanel from "./LeadFormPanel.jsx";
 import QuestionsPanel from "./QuestionsPanel.jsx";
 import ResultsPanel from "./ResultsPanel.jsx";
+import ABTestPanel from "./ABTestPanel.jsx";
 import AdminLogin from "./AdminLogin.jsx";
 
 const TABS = [
   { to: "/admin", label: "Dashboard", end: true },
   { to: "/admin/site", label: "Site & Meta" },
-  { to: "/admin/landing", label: "Landing" },
+  { to: "/admin/landing", label: "Landing (A)" },
+  { to: "/admin/landing-b", label: "Landing (B)" },
+  { to: "/admin/abtest", label: "A/B Test" },
   { to: "/admin/leadform", label: "Lead Form" },
   { to: "/admin/questions", label: "Questions" },
   { to: "/admin/results", label: "Results" },
@@ -83,7 +86,10 @@ export default function AdminApp() {
           <Route path="site" element={
             <ContentEditor title="Site & Meta" pages={["thankyou", "quiz"]} />} />
           <Route path="landing" element={
-            <ContentEditor title="Landing page content" pages={["landing"]} />} />
+            <ContentEditor title="Landing A — current layout" pages={["landing"]} />} />
+          <Route path="landing-b" element={
+            <ContentEditor title="Landing B — masterclass layout" pages={["landing_b"]} />} />
+          <Route path="abtest" element={<ABTestPanel />} />
           <Route path="leadform" element={<LeadFormPanel />} />
           <Route path="questions" element={<QuestionsPanel />} />
           <Route path="results" element={<ResultsPanel />} />
