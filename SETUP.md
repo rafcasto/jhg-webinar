@@ -77,6 +77,26 @@ select cron.schedule('zoom-sync-postmeeting','0 0 * * 3', $$
 $$);
 ```
 
+## 6. A/B layout test (landing page)
+
+Two landing layouts run behind `/`: **Variant A** (the current "New Rules" page,
+`src/pages/LandingA.jsx`) and **Variant B** (a masterclass-style page,
+`src/pages/LandingB.jsx`). `src/pages/Landing.jsx` buckets each visitor, sticks
+their choice in `localStorage`, and records one exposure.
+
+- **Schema:** apply `supabase/migrations/0007_ab_test.sql` (already folded into
+  `apply_all.sql`). Adds `experiments`, `ab_exposures`, a `variant` column on
+  leads, and a public `record_ab_exposure` RPC. `register_lead` now tags the
+  lead's variant.
+- **Default is OFF** — everyone sees Variant A until you flip the test on.
+- **Admin → A/B Test tab:** toggle the test live, drag the traffic split (or use
+  the 50/50, 80/20, 20/80 presets), and read **visitors / registrations /
+  conversion rate** per variant. Conversion = registration.
+- **Admin → Landing (B) tab:** edit every word of Variant B (same CMS editor as
+  Variant A, page key `landing_b`).
+- **Preview without skewing data:** `/?v=a` and `/?v=b` force a layout (not
+  counted as exposures).
+
 ## 5. Kit countdown (event-anchored)
 
 Kit's free plan has no automations, so reminders are sent as **scheduled

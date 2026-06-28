@@ -93,7 +93,7 @@ export function webinarRsvpTag(event) {
 export const QUIZ_TAG = "EVENT->ANSWER->WEBINAR-QUIZ";
 
 /** Step 1 — record the RSVP (acquisition) event. Returns event row id. */
-export async function registerLead({ first_name, last_name, email, location, phone, source, tag }) {
+export async function registerLead({ first_name, last_name, email, location, phone, source, tag, variant }) {
   const { data, error } = await supabase.rpc("register_lead", {
     p_first_name: first_name,
     p_last_name: last_name || null,
@@ -102,6 +102,7 @@ export async function registerLead({ first_name, last_name, email, location, pho
     p_source: source || null,
     p_location: location || null,
     p_phone: phone || null,
+    p_variant: variant || null,
   });
   if (error) throw error;
   return data; // uuid
@@ -147,4 +148,44 @@ export async function zoomRegister({ meeting_id, occurrence_id, email, first_nam
   } catch (e) {
     console.warn("[zoom-register] skipped:", e.message);
   }
+}
+
+// ---------- A/B layout test (admin) ----------
+
+/** Read the landing experiment config. */
+export async function getLandingExperiment() {
+  const { data, error } = await supabase
+    .from("experiments").select("*").eq("key", "landing").maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+/** Update the landing experiment (admin only — enforced by RLS). */
+export async function saveLandingExperiment({ enabled, weight_a, weight_b }) {
+  const { error } = await supabase
+    .from("experiments")
+    .update({ enabled, weight_a, weight_b })
+    .eq("key", "landing");
+  if (error) throw error;
+}
+
+/**
+ * Pull A/B results: exposures per variant + unique registrations per variant.
+ * Returns { a: {exposures, registrations}, b: {...} }.
+ */
+export async function getAbResults() {
+  const [{ data: exp }, { data: leads }] = await Promise.all([
+    supabase.from("ab_exposures").select("variant,count").eq("experiment", "landing"),
+    supabase.from("jobhackers_leads").select("email,variant").eq("stage", "acquisition"),
+  ]);
+
+  const out = { a: { exposures: 0, registrations: 0 }, b: { exposures: 0, registrations: 0 } };
+  (exp || []).forEach((r) => { if (out[r.variant]) out[r.variant].exposures = Number(r.count) || 0; });
+
+  // unique emails per variant
+  const seen = { a: new Set(), b: new Set() };
+  (leads || []).forEach((l) => { if (l.variant && seen[l.variant]) seen[l.variant].add(l.email); });
+  out.a.registrations = seen.a.size;
+  out.b.registrations = seen.b.size;
+  return out;
 }
