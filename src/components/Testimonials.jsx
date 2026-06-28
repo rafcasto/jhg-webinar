@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Portrait, SectionHead } from "./ui.jsx";
 
 // Real, attributed reviews published on jobhackers.global.
@@ -11,26 +11,22 @@ const ITEMS = [
 ];
 
 export default function Testimonials() {
-  const [i, setI] = useState(0);
-  const t = ITEMS[i];
   return (
     <section className="section section--tint" id="stories">
       <div className="container">
         <SectionHead eyebrow="Success stories" title="Real members. Real offers." />
-        <div className="testimonial-card">
-          <p className="testimonial-card__quote">“{t.quote}”</p>
-          <div className="testimonial-card__attr">
-            <Portrait initials={t.name.split(" ").map((w) => w[0]).join("")} />
-            <div>
-              <div className="testimonial-card__name">{t.name}</div>
-              <div className="testimonial-card__role">{t.role}</div>
+        <div className="grid-3 testimonial-grid">
+          {ITEMS.map((t, i) => (
+            <div className="testimonial-card testimonial-card--grid" key={i}>
+              <p className="testimonial-card__quote">“{t.quote}”</p>
+              <div className="testimonial-card__attr">
+                <Portrait initials={t.name.split(" ").map((w) => w[0]).join("")} />
+                <div>
+                  <div className="testimonial-card__name">{t.name}</div>
+                  <div className="testimonial-card__role">{t.role}</div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="testimonial-dots">
-          {ITEMS.map((_, k) => (
-            <button key={k} className={"testimonial-dot" + (k === i ? " is-active" : "")}
-              onClick={() => setI(k)} aria-label={`Story ${k + 1}`} />
           ))}
         </div>
       </div>

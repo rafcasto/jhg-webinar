@@ -27,7 +27,7 @@ function Stars({ value }) {
 
 export default function MeetupProof() {
   return (
-    <section className="section mu-proof" style={{ paddingTop: 0 }}>
+    <section className="section mu-proof">
       <div className="container">
         <div className="mu-card">
           <div className="mu-card__score">

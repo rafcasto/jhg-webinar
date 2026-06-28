@@ -72,6 +72,19 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
   cursor: pointer; transition: background 200ms; }
 .testimonial-dot.is-active { background: var(--jh-red); width: 24px; }
 
+/* Testimonials as an equal-height 3-up grid */
+.testimonial-grid { align-items: stretch; }
+.testimonial-card--grid { max-width: none; margin: 0; padding: 30px; display: flex; flex-direction: column;
+  box-shadow: var(--shadow-1); height: 100%; }
+.testimonial-card--grid .testimonial-card__quote { font-size: 18px; font-weight: 600; line-height: 1.45;
+  margin: 0 0 20px 0; flex: 1; }
+@media (max-width: 860px) {
+  .testimonial-grid { grid-template-columns: 1fr; }
+}
+
+/* Meetup proof sits just below testimonials — give it a little breathing room */
+.mu-proof { padding-top: 48px; }
+
 /* ---------- 7. Portraits ---------- */
 .portrait { width: 56px; height: 56px; border-radius: 999px;
   background: linear-gradient(135deg, #e2ebfb, #f6e0e3); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--jh-line);
