@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.countdown-broadcasts]
 verify_jwt = false
+
+[functions.event-ics]
+verify_jwt = false

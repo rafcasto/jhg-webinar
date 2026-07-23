@@ -3,8 +3,14 @@
 // in Kit and applies the event tag (e.g. EVENT->RSVP->WEBINAR-2026-06-25 or
 // EVENT->ANSWER->WEBINAR-QUIZ), plus a source tag and custom fields.
 //
-// Secrets: SUPABASE_URL, SUPABASE_SECRET_KEY, KIT_API_KEY
-//          KIT_SEQUENCE_ID (optional)
+// For webinar RSVPs it also looks up the matching occurrence in webinar_events
+// (the tag encodes the date) and stamps calendar details onto the subscriber:
+//   webinar_date, webinar_time, join_url, occurrence_id, zoom_meeting_id
+// The immediate welcome email (a Kit Sequence step) uses these as merge fields
+// so its "add to calendar" links are correct per-person.
+//
+// Secrets: PROJECT_URL, SERVICE_KEY, KIT_API_KEY
+//          KIT_SEQUENCE_ID (the webinar show-up sequence: welcome + value email)
 //
 // Invoke:  supabase.functions.invoke('kit-enroll', { body: { lead_id } })
 //          where lead_id is a jobhackers_leads row id.
@@ -48,6 +54,30 @@ Deno.serve(async (req) => {
       .from("jobhackers_leads").select("*").eq("id", lead_id).single();
     if (error || !lead) return json({ error: "lead not found" }, 404);
 
+    // Look up the webinar occurrence this RSVP is for (the tag encodes the date),
+    // so we can attach calendar details for the per-person welcome email.
+    const eventFields: Record<string, string> = {};
+    const md = (lead.tag || "").match(/WEBINAR-(\d{4}-\d{2}-\d{2})/);
+    if (md) {
+      const day = md[1];
+      const next = new Date(`${day}T00:00:00Z`);
+      next.setUTCDate(next.getUTCDate() + 1);
+      const { data: ev } = await admin
+        .from("webinar_events").select("*")
+        .gte("start_time", `${day}T00:00:00Z`)
+        .lt("start_time", next.toISOString())
+        .order("start_time", { ascending: true })
+        .limit(1).maybeSingle();
+      if (ev) {
+        const start = new Date(ev.start_time);
+        eventFields.webinar_date = start.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: ev.timezone });
+        eventFields.webinar_time = start.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: ev.timezone });
+        eventFields.join_url = ev.join_url || "";
+        eventFields.occurrence_id = String(ev.occurrence_id ?? "");
+        eventFields.zoom_meeting_id = String(ev.zoom_meeting_id ?? "");
+      }
+    }
+
     // 1) upsert subscriber + custom fields
     const { subscriber } = await kit(`/subscribers`, {
       method: "POST",
@@ -60,6 +90,7 @@ Deno.serve(async (req) => {
           source: lead.source || "",
           location: lead.location || "",
           lead_score: String(lead.score ?? ""),
+          ...eventFields,
         },
       }),
     });
@@ -71,13 +102,14 @@ Deno.serve(async (req) => {
       await kit(`/tags/${tagId}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
     }
 
-    // 3) optional countdown sequence (use scheduled dispatch for event-anchored timing)
+    // 3) welcome + value-email sequence (immediate welcome pushes calendar scheduling).
+    //    Only enroll RSVPs (not quiz-only rows) so we don't welcome non-registrants.
     const seq = Deno.env.get("KIT_SEQUENCE_ID");
-    if (seq) {
+    if (seq && md) {
       await kit(`/sequences/${seq}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
     }
 
-    return json({ ok: true, kit_subscriber_id: subscriber.id, tags: tagNames });
+    return json({ ok: true, kit_subscriber_id: subscriber.id, tags: tagNames, event: eventFields });
   } catch (e) {
     return json({ error: String(e) }, 500);
   }
