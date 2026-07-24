@@ -39,9 +39,9 @@ So let's do that right now, before anything else pulls your attention:
 
 That one click sets a reminder and locks the time. No timezone math—your calendar handles it.
 
-What this 90 minutes actually is: a live walk-through of the same system behind our 60-day bootcamp, taught by David Perry and Laurent Simon. It's free, but it isn't a watered-down "webinar." It's the real approach—the hidden-market moves most job seekers never make.
+What this 90 minutes actually is: a live walk-through of the 3 Secrets behind getting hired in weeks, not months—**Job Hacking** (turn your search into an 8-week project), **Success Cloning** (copy the exact path of people already hired in your field), and **Hidden Job Market Hack #1** (get introduced to hiring managers before a role is ever posted). Taught live by David Perry and Laurent Simon. It's free, but it isn't a watered-down "webinar"—it's the real system, the hidden-market moves most job seekers never make.
 
-Come with your toughest question. And bring the belief that's been slowing you down—"I don't know what to do," "I'm not good enough," or "people won't react well"—we're dismantling all three, live.
+Come with your toughest question. And bring the belief that's been slowing you down—"I don't know what to do," "I'm not good enough," or "people won't react well"—because each Secret is built to dismantle one of them, live. That's the shift we're after: from discouraged Job Seeker to confident JobHacker.
 
 One more thing that takes ten seconds: **hit reply** and tell me the one role you're chasing right now (or the single thing slowing your search). I read these, and we aim the session at what you actually need.
 
@@ -49,7 +49,7 @@ See you inside,
 David & Laurent
 Co-founders & instructors, Job Hackers Global
 
-*Can't make it live? Add it to your calendar anyway—we'll send your join link as it gets close, and you'll want the reminder.*
+*Can't make it live? Add it to your calendar anyway—we'll send your join link as it gets close, and you'll want the reminder. (One nudge to be there in person: there's a live-only bonus that isn't in the replay.)*
 
 ---
 ---
@@ -76,7 +76,7 @@ No job ask. No pressure. Just a person asking a person for 15 minutes—which is
 
 Send it to one person today. Hit reply and tell me who you're sending it to—I read these.
 
-That message is step one of the system. The MasterClass is where you get the rest. Your seat's saved:
+That message is a taste of Secret #3—the Hidden Job Market Hack. The MasterClass is where you get all three. Your seat's saved:
 
 **Join here → {{ subscriber.join_url }}**
 
