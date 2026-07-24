@@ -4,8 +4,11 @@
 // tag and anchored to the real start time.
 // Idempotent via the webinar_broadcasts table.
 //
-// Copy is v3 (claims-disciplined): numbers-free testimonials, no salary figures,
-// no hard hidden-market percentages, closed em-dashes throughout.
+// Copy is v4 (webinar-aligned): the sequence now promises the SAME thing the
+// webinar delivers — the 3 Secrets (Job Hacking · Success Cloning · Hidden Job
+// Market Hack #1) — and the genuine, attend-or-miss live-only mystery bonus.
+// Still claims-disciplined: numbers-free testimonials, no salary figures, no hard
+// hidden-market percentages, no price, the bonus stays UNNAMED, closed em-dashes.
 //
 // The 48h + 24h emails include an "Add to calendar" block (Google / Outlook /
 // Apple .ics). All calendar times are UTC, so each recipient's calendar app
@@ -62,7 +65,7 @@ function calBlock(ev: any) {
   const end = new Date(start.getTime() + (ev.duration_min ?? 90) * 60000);
   const title = ev.topic || "JobHackers MasterClass";
   const join = ev.join_url || "";
-  const details = `Your free live MasterClass with David & Laurent. Join here: ${join}`;
+  const details = `Your free 90-minute live MasterClass with David & Laurent. Join here: ${join}`;
   const g = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}` +
     `&dates=${zstamp(start)}/${zstamp(end)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(join)}`;
   const o = `https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent` +
@@ -70,11 +73,11 @@ function calBlock(ev: any) {
     `&body=${encodeURIComponent(details)}&location=${encodeURIComponent(join)}`;
   const ics = `${ICS_BASE}?o=${encodeURIComponent(ev.occurrence_id)}&m=${encodeURIComponent(ev.zoom_meeting_id)}`;
   return `<p style="margin:18px 0;padding:12px 16px;background:#f4f6fb;border-radius:8px">` +
-    `<b>📅 Add it to your calendar</b> — it'll show in your own timezone automatically:<br>` +
+    `<b>📅 Add it to your calendar</b>—it'll show in your own timezone automatically:<br>` +
     `<a href="${g}">Google</a> &nbsp;·&nbsp; <a href="${o}">Outlook</a> &nbsp;·&nbsp; <a href="${ics}">Apple / .ics</a></p>`;
 }
 
-// milestone offsets (ms before start) + v3 copy
+// milestone offsets (ms before start) + v4 copy
 function milestones(ev: any) {
   const { date, time } = fmt(ev.start_time, ev.timezone);
   const join = ev.join_url || "#";
@@ -86,16 +89,22 @@ function milestones(ev: any) {
 
   const list: any[] = [];
 
-  // 48 hours before — contrast, soft hidden-market framing (no percentages)
+  // 48 hours before — contrast + the 3 Secrets promise (soft hidden-market, no %)
   list.push({
     key: "48h",
     ms: 48 * 3600e3,
     subject: "Two sleeps out—the 6-month search vs the 6-week one",
     html: wrap(
       `<p>Hi {{ subscriber.first_name }},</p>` +
-      `<p>Two sleeps to go. In <b>48 hours</b> (<b>${date}, ${time}</b>) we go live, and here's the question the whole session answers.</p>` +
+      `<p>Two sleeps to go. In <b>48 hours</b> (<b>${date}, ${time}</b>) we go live, and here's the question the whole MasterClass answers.</p>` +
       `<p>Two people with the same experience apply for the same kind of role. One is still searching six months later. The other is hired in six weeks. The difference is almost never talent—it's that one of them is only fishing in the pond everyone else is fishing in.</p>` +
-      `<p>Most roles that get filled were never advertised. They're filled through referrals and conversations before they ever reach a job board. That's the market the fast movers work, and the slow ones never touch—and it's exactly what we'll show you how to crack, live.</p>` +
+      `<p>Most roles that get filled were never advertised. They're filled through referrals and conversations before they ever reach a job board. That's the market the fast movers work, and the slow ones never touch.</p>` +
+      `<p>On the MasterClass we hand you the 3 Secrets behind the six-week version:</p>` +
+      `<ul>` +
+      `<li><b>Job Hacking</b>—turn your search into an 8-week project, not a 12-month ordeal.</li>` +
+      `<li><b>Success Cloning</b>—copy the exact path of people already hired in your field.</li>` +
+      `<li><b>Hidden Job Market Hack #1</b>—get introduced to hiring managers before a role is ever posted.</li>` +
+      `</ul>` +
       `<p>You've already registered. All you need to do now is show up. Here's your room:</p>` +
       `<p><b>Confirm you're coming → <a href="${join}">${join}</a></b></p>` +
       cal +
@@ -114,7 +123,7 @@ function milestones(ev: any) {
       `<p>If you've been <b>out of work and stuck:</b> Daria was jobless for eight months, then hired in about 30 days.</p>` +
       `<p>If you're tired of <b>applying with nothing to show for it:</b> Alexandra landed two offers in three weeks.</p>` +
       `<p>If your job hunt <b>keeps dragging on:</b> Geetha landed her new job in 60 days.</p>` +
-      `<p>Different starting points, same system—the one we walk through live. Which one is closest to you?</p>` +
+      `<p>Different starting points, same system—the 3 Secrets we walk through live. That's the road from discouraged Job Seeker to confident JobHacker. Which one is closest to you?</p>` +
       `<p><b>Hit reply and tell me</b>—I'll make sure we cover it live. And here's your seat:</p>` +
       `<p><b>Join here → <a href="${join}">${join}</a></b></p>` +
       cal +
@@ -134,13 +143,14 @@ function milestones(ev: any) {
         `<p>Hi {{ subscriber.first_name }},</p>` +
         `<p>Today's the day. You signed up because something about your search isn't working the way it should—that reason didn't go away overnight.</p>` +
         `<p>A few hours from now we go live at <b>${time}</b>. Protect the time, bring your target role, and let's fix the part that's been costing you interviews.</p>` +
+        `<p>One nudge to show up live: there's a bonus we're deliberately not naming here. It goes to the people in the room, and it isn't in the replay.</p>` +
         `<p><b>Here's your link for later → <a href="${join}">${join}</a></b></p>` +
         sign,
       ),
     });
   }
 
-  // 1 hour before — named agenda + honest replay reframe
+  // 1 hour before — GOAL / OBSTACLE / SHIFT agenda + live-only bonus reminder
   list.push({
     key: "1h",
     ms: 1 * 3600e3,
@@ -154,19 +164,20 @@ function milestones(ev: any) {
       `<li><b>The shift</b>—the hidden-market move most job seekers never make.</li>` +
       `</ul>` +
       `<p>One thing: we post a replay, but the replay can't answer <i>your</i> question. The live Q&A is where we look at your specific situation—and you have to be in the room for that. Come with the role you're chasing in mind; the more specific you are, the more you walk away with.</p>` +
+      `<p>Reminder: the live-only bonus goes to the people in the room—it's not in the replay.</p>` +
       `<p><b>Join here → <a href="${join}">${join}</a></b></p>` +
       `<p>See you there,<br>The JobHackers team</p>`,
     ),
   });
 
-  // 15 minutes before — urgency, one link
+  // 15 minutes before — urgency, one link, honest replay reframe
   list.push({
     key: "15m",
     ms: 15 * 60e3,
     subject: "We start in 15 minutes—your link's inside",
     html: wrap(
       `<p>Hi {{ subscriber.first_name }},</p>` +
-      `<p>We're starting in <b>15 minutes.</b> Grab a notebook, close the other tabs, and jump in. This is the part that doesn't come back—the live Q&A happens once, and only for the people in the room.</p>` +
+      `<p>We're starting in <b>15 minutes.</b> Grab a notebook, close the other tabs, and jump in. Life happens—but the live Q&A and the live-only bonus can't be replayed.</p>` +
       `<p><b>Join now → <a href="${join}">${join}</a></b></p>` +
       `<p>See you inside,<br>The JobHackers team</p>`,
     ),
