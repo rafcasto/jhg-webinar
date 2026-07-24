@@ -10,9 +10,19 @@ import { formatEvent, formatRange } from "../lib/format.js";
 
 const PRESENTERS = [
   { name: "David Perry", src: "/assets/founder-david-perry.jpeg",
-    bio: "Legendary recruiter and author of \"Guerrilla Marketing for Job Hunters.\" Co-creator of the JobHackers playbook — he's helped thousands crack the hidden job market and get hired faster." },
+    bio: "Legendary recruiter and author of \"Guerrilla Marketing for Job Hunters.\" Co-creator of the JobHackers playbook—he's helped thousands crack the hidden job market and get hired faster." },
   { name: "Laurent Simon", src: "/assets/founder-laurent-simon.jpeg",
-    bio: "Co-founder of JobHackers Global. Turned a proven 60-day roadmap into the live cohort that's helped members land roles they love — often with double-digit salary increases." },
+    bio: "Co-founder of JobHackers Global. Turned a proven 60-day roadmap into the live cohort that's helped members land roles they love—often with double-digit salary increases." },
+];
+
+// The 3 Secrets—same message as Variant A, adapted to B's compact "parts" cards.
+const SECRETS = [
+  { kicker: "SECRET #1", title: "Job Hacking",
+    desc: "How to harness AI and our 8-step roadmap to make a good job an 8-week project—not a 12-month ordeal. For everyone thinking \"I don't know what to do.\"" },
+  { kicker: "SECRET #2", title: "Success Cloning",
+    desc: "How to ethically \"steal\" the exact path of people in your industry who've already landed—no reinventing yourself. For everyone thinking \"I'm not good enough.\"" },
+  { kicker: "SECRET #3", title: "Hidden Job Market Hack #1",
+    desc: "How to get introduced directly to hiring managers before the job is ever posted—no online applications. For everyone thinking \"people won't react well if I reach out.\"" },
 ];
 
 function Countdown({ target, label }) {
@@ -68,31 +78,31 @@ export default function LandingB({ variant = "b" }) {
   const next = events[0] || null;
 
   const parts = [1, 2, 3].map((n) => ({
-    kicker: T(`part_${n}_kicker`, `PART 0${n}`),
-    title: T(`part_${n}_title`, ""),
-    desc: T(`part_${n}_desc`, ""),
+    kicker: T(`part_${n}_kicker`, SECRETS[n - 1].kicker),
+    title: T(`part_${n}_title`, SECRETS[n - 1].title),
+    desc: T(`part_${n}_desc`, SECRETS[n - 1].desc),
   }));
-  const proof = T("proof_strip", "2,000+ professionals trained · David Perry & Laurent Simon · 60-minute live session")
+  const proof = T("proof_strip", "3,000+ professionals coached · David Perry & Laurent Simon · 90-minute live MasterClass")
     .split("·").map((s) => s.trim()).filter(Boolean);
 
   return (
     <>
       <SiteHeader onRegister={openModal} ctaLabel={cta} />
 
-      {/* HERO — centered, countdown-driven */}
+      {/* HERO—centered, countdown-driven */}
       <section className="mc-hero">
         <div className="container mc-narrow center">
-          <div className="mc-badge">● {T("badge", "FREE LIVE MASTERCLASS")}</div>
+          <div className="mc-badge">● {T("badge", "FREE LIVE MASTERCLASS—with David Perry & Laurent Simon")}</div>
           <h1 className="mc-h1">
-            {T("hero_title", "You Did Everything Right. The Rules of Getting Hired Changed Anyway.")}{" "}
-            <span className="accent">{T("hero_title_accent", "Here Are the New Ones.")}</span>
+            {T("hero_title", "How to Secure a Job You Love, at the Salary You Deserve")}
+            <span className="accent">{T("hero_title_accent", "—Without Applying Online.")}</span>
           </h1>
           <p className="mc-sub">{T("hero_subtitle",
-            "In this free 60-minute masterclass, David Perry & Laurent Simon show you how to get clear, build proof, and get chosen — even in a market flooded by AI résumés and ghosted applications.")}</p>
+            "The free 90-minute live MasterClass for professionals stuck in limbo—job hunting, changing careers, or chasing the promotion you've earned. Learn the exact system 3,000+ professionals in 35 countries have used to get hired in weeks, not months.")}</p>
 
           <Button variant="primary" size="lg" onClick={() => openModal(0)}>{cta} →</Button>
 
-          <Countdown target={next?.start_time} label={T("countdown_label", "Next masterclass begins in")} />
+          <Countdown target={next?.start_time} label={T("countdown_label", "Next MasterClass begins in")} />
           {next && (
             <div className="mc-when">
               {formatEvent(next)?.date} · {formatRange(next)}
@@ -105,11 +115,11 @@ export default function LandingB({ variant = "b" }) {
         </div>
       </section>
 
-      {/* WHAT YOU'LL LEARN */}
+      {/* WHAT YOU'LL LEARN—the 3 Secrets */}
       <section className="section section--tint">
         <div className="container mc-narrow">
-          <div className="mc-kicker center">WHAT YOU'LL LEARN</div>
-          <h2 className="mc-h2 center">{T("learn_heading", "Here's what you're going to get out of this (free) masterclass…")}</h2>
+          <div className="mc-kicker center">THE 3 SECRETS YOU'LL LEARN LIVE</div>
+          <h2 className="mc-h2 center">{T("learn_heading", "Each one kills the belief that's keeping you stuck.")}</h2>
 
           <div className="mc-parts">
             {parts.map((p, i) => (
@@ -121,10 +131,10 @@ export default function LandingB({ variant = "b" }) {
             ))}
 
             <div className="mc-part mc-part--bonus">
-              <div className="mc-part__tag">{T("bonus_kicker", "LIVE BONUS")}</div>
-              <h3 className="mc-part__title">{T("bonus_title", "The JobHacker Mission Card")}</h3>
+              <div className="mc-part__tag">{T("bonus_kicker", "LIVE-ONLY BONUS")}</div>
+              <h3 className="mc-part__title">{T("bonus_title", "We're keeping this one a secret.")}</h3>
               <p className="mc-part__desc">{T("bonus_desc",
-                "Show up live and you'll walk away with the one-page operating system that turns a chaotic job hunt into a disciplined campaign.")}</p>
+                "Attend live and you'll get a bonus we're deliberately not naming. Not sent with the replay.")}</p>
             </div>
           </div>
 
@@ -138,7 +148,7 @@ export default function LandingB({ variant = "b" }) {
       <section className="section">
         <div className="container mc-narrow">
           <div className="mc-kicker center">YOUR INSTRUCTORS</div>
-          <h2 className="mc-h2 center">{T("presenters_heading", "Your Masterclass Hosts")}</h2>
+          <h2 className="mc-h2 center">{T("presenters_heading", "Your MasterClass Hosts")}</h2>
           <div className="mc-hosts">
             {PRESENTERS.map((p) => (
               <div className="mc-host" key={p.name}>
@@ -158,9 +168,9 @@ export default function LandingB({ variant = "b" }) {
       {/* CLOSER */}
       <section className="section section--dark center">
         <div className="container mc-narrow">
-          <h2 className="mc-h2" style={{ color: "#fff" }}>{T("closer_heading", "Don't miss this free masterclass.")}</h2>
+          <h2 className="mc-h2" style={{ color: "#fff" }}>{T("closer_heading", "Don't miss this free MasterClass.")}</h2>
           <p className="mc-closer-sub">{T("closer_sub",
-            "60 minutes that could change your career. Pick the session that suits you — it runs every fortnight.")}</p>
+            "90 minutes that could change your career. From discouraged Job Seeker to confident JobHacker—pick the session that suits you. It runs every fortnight.")}</p>
 
           {events.length > 0 && (
             <div className="mc-dates">

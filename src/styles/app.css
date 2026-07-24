@@ -49,7 +49,7 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 .section--dark .section__lede { color: rgba(255,255,255,.7); }
 .section--dark .section__title { color: #fff; }
 
-/* ---------- 5. 7 Steps ---------- */
+/* ---------- 5. 8 Steps ---------- */
 .steps-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; }
 .step-card { background: #fff; border: 1.5px solid var(--jh-line); border-radius: 16px; padding: 22px 16px;
   transition: all 200ms cubic-bezier(.2,.7,.2,1); display: flex; flex-direction: column; gap: 4px; }
@@ -587,3 +587,34 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 .ab-presets { display: flex; gap: 10px; margin-top: 16px; }
 .ab-win { background: var(--jh-red-soft); }
 .ab-win td { font-weight: 700; }
+
+/* ============================================================
+   12b. Thank-you redesign — founder quote, steps, share module
+============================================================ */
+.identity-arc { color: #fff; font-family: var(--font-display); font-weight: 600; font-style: italic; opacity: .9; }
+
+.ty-quote { max-width: 720px; margin: 32px auto 0; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px; padding: 32px 28px; text-align: center; }
+.ty-quote__faces { display: flex; gap: 16px; justify-content: center; margin-bottom: 18px; }
+.ty-quote blockquote { margin: 0; color: rgba(255,255,255,.92); font-size: 18px; line-height: 1.6; }
+.ty-quote cite { display: block; margin-top: 14px; font-style: normal; font-weight: 600; color: #fff; }
+
+.ty-step { display: flex; gap: 20px; align-items: flex-start; max-width: 760px; margin: 0 auto 20px; }
+.ty-step__num { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 999px; background: var(--jh-red); color: #fff;
+  font-family: var(--font-display); font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+.ty-card--wide { flex: 1; text-align: left; align-items: stretch; }
+.ty-card--wide .ty-card__icon { font-size: 32px; }
+
+.share-module { flex: 1; border: 1px solid var(--jh-line); border-radius: 16px; padding: 28px; background: #fff; box-shadow: var(--shadow-1); }
+.share-module__title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0 0 20px; color: var(--fg-1); }
+.share-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.share-card { border: 1px solid var(--jh-line); border-radius: 12px; padding: 18px; background: var(--jh-paper); display: flex; flex-direction: column; gap: 12px; }
+.share-card__k { font-family: var(--font-display); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-3); }
+.share-card__preview { font-size: 14px; line-height: 1.55; color: var(--fg-2); margin: 0; }
+.share-card__actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; }
+.share-card__note { font-size: 12px; color: var(--fg-3); margin: 0; word-break: break-all; }
+
+@media (max-width: 720px) {
+  .share-grid { grid-template-columns: 1fr; }
+  .ty-step { flex-direction: column; gap: 12px; }
+}

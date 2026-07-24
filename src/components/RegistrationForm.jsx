@@ -73,7 +73,7 @@ export default function RegistrationForm({ events = [], content = {}, variant = 
 
   return (
     <div className={cls} id={id}>
-      <h3>{content.form_heading || "Seats are limited. Secure yours now."}</h3>
+      <h3>{content.form_heading || "Save your seat. The live-only bonus isn't in the replay."}</h3>
       {err && <div className="form-error">{err}</div>}
       <form onSubmit={submit}>
         <div className="field-row">
@@ -111,7 +111,7 @@ export default function RegistrationForm({ events = [], content = {}, variant = 
         </div>
 
         <Button variant="primary" size="lg" block disabled={busy}>
-          {busy ? "Registering…" : (content.form_button || "Register Now")}
+          {busy ? "Registering…" : (content.form_button || "Save My Seat →")}
         </Button>
 
         <p className="reg-disclaimer">{content.register_disclaimer || DEFAULT_DISCLAIMER}</p>

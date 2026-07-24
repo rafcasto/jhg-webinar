@@ -20,16 +20,16 @@ Merge fields used: `{{ subscriber.first_name }}`, `{{ event_date }}`, `{{ event_
 
 Hi {{ first_name }},
 
-You're registered for the **Job Hacking workshop** on **{{ event_date }} at {{ event_time }}**. Nice move.
+You're registered for the **Job Hacking MasterClass** on **{{ event_date }} at {{ event_time }}**. Nice move.
 
 Here's what we'll cover live:
-1. How to **crack the hidden job market** (where 80% of roles actually get filled)
+1. How to **crack the hidden job market** (70–80% of roles are never publicly advertised)
 2. How to turn your LinkedIn into a profile recruiters *come to*
-3. How to **negotiate the offer you deserve** — without the awkwardness
+3. How to **negotiate the offer you deserve**—without the awkwardness
 
 Three things to do now:
 - **Add it to your calendar** so future-you shows up.
-- **Watch your inbox** — I'll send the join link and a couple of short prep lessons.
+- **Watch your inbox**—I'll send the join link and a couple of short prep lessons.
 - **Reply** with the #1 thing you want to walk away with. I read every one.
 
 See you soon,
@@ -38,15 +38,15 @@ The JobHackers team
 ---
 
 ## 2. 48-hour reminder — *the story*
-**Subject:** Two sleeps to go — a quick confession, {{ first_name }}
+**Subject:** Two sleeps to go—a quick confession, {{ first_name }}
 
 Hi {{ first_name }},
 
 In **48 hours** we go live. Before then, a confession: most people don't struggle to find a job because they're not good enough. They struggle because **nobody taught them the playbook.**
 
-The visible job market — the postings everyone fights over — is only **20%** of the opportunities. The other **80%** is hidden, filled through networks and referrals. On {{ event_date }} I'll show you exactly how to crack it.
+The visible job market—the postings everyone fights over—is the small slice. **70–80% of roles are never publicly advertised**; they're filled through networks and referrals. On {{ event_date }} I'll show you exactly how to crack it.
 
-Block the time. It's the highest-leverage hour you'll spend on your search this month.
+Block the time. It's the highest-leverage 90 minutes you'll spend on your search this month.
 
 See you {{ event_date }},
 The JobHackers team
@@ -62,8 +62,8 @@ Tomorrow at **{{ event_time }}** we go live. Prepping the room now.
 
 A few members who used this exact playbook:
 
-> "Three final-round interviews in a month after months of silence." — *Priya R.*
-> "The negotiation piece alone got me +22% on my offer." — *Marcus T.*
+> "Two job offers within three weeks! JobHackers Global 100% surpasses the traditional outplacement paid by my former employer." — *Alexandra Moorhouse, Chief Digital Officer 🇺🇸*
+> "€22,000 extra in only 45 days. I interviewed with 8 companies and secured a job I really love." — *Natalie Owen, Insurance Professional 🇩🇪*
 
 Tomorrow you'll get the same starting point. Anything specific you want covered? Just reply.
 
@@ -72,7 +72,7 @@ The JobHackers team
 ---
 
 ## 4. One-hour reminder — *the agenda* (not a "confirmation")
-**Subject:** AGENDA for today's workshop
+**Subject:** AGENDA for today's MasterClass
 
 Hi {{ first_name }},
 
@@ -84,19 +84,21 @@ We're live in **one hour**. Here's the agenda so you get maximum value:
 
 Join link: {{ join_url }}
 
-I've set the room up so we won't be interrupted — see you there.
+Reminder: the live-only bonus goes to people in the room—it's not in the replay.
+
+I've set the room up so we won't be interrupted—see you there.
 The JobHackers team
 
 ---
 
 ## 5. 15-minute reminder — *just the link*
-**Subject:** We start in 15 minutes — your link
+**Subject:** We start in 15 minutes—your link
 
 Hi {{ first_name }},
 
 We're starting in **15 minutes**. Jump in here:
 {{ join_url }}
 
-Can't make it on video? Reply and we'll send the replay.
+Life happens—but the live Q&A and the live-only bonus can't be replayed.
 See you inside,
 The JobHackers team

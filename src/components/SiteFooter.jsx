@@ -15,7 +15,7 @@ export default function SiteFooter() {
             <h4>Program</h4>
             <ul>
               <li><a href="https://jobhackers.global" target="_blank" rel="noreferrer">The Challenge</a></li>
-              <li><a href="#playbook">The 7-step Playbook</a></li>
+              <li><a href="#playbook">The 8-step Playbook</a></li>
               <li><a href="#stories">Success Stories</a></li>
             </ul>
           </div>

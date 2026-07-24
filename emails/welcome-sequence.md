@@ -39,7 +39,9 @@ So let's do that right now, before anything else pulls your attention:
 
 That one click sets a reminder and locks the time. No timezone math—your calendar handles it.
 
-What this hour actually is: a live walk-through of the same system behind our 60-day bootcamp, taught by David Perry and Laurent Simon. It's free, but it isn't a watered-down "webinar." It's the real approach—the hidden-market moves most job seekers never make.
+What this 90 minutes actually is: a live walk-through of the same system behind our 60-day bootcamp, taught by David Perry and Laurent Simon. It's free, but it isn't a watered-down "webinar." It's the real approach—the hidden-market moves most job seekers never make.
+
+Come with your toughest question. And bring the belief that's been slowing you down—"I don't know what to do," "I'm not good enough," or "people won't react well"—we're dismantling all three, live.
 
 One more thing that takes ten seconds: **hit reply** and tell me the one role you're chasing right now (or the single thing slowing your search). I read these, and we aim the session at what you actually need.
 
