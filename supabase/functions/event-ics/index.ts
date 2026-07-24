@@ -48,8 +48,8 @@ Deno.serve(async (req) => {
     const join = ev.join_url || "";
     const title = ev.topic || "JobHackers MasterClass";
     const detailsPlain =
-      "Your free live MasterClass with David & Laurent. Join here: " + join +
-      " — come with the role you're chasing in mind.";
+      "Your free 90-minute live MasterClass with David & Laurent. Join here: " + join +
+      "—come with the role you're chasing in mind.";
 
     // --- Redirect modes (Google / Outlook) ---
     if (to === "google") {
@@ -66,8 +66,8 @@ Deno.serve(async (req) => {
 
     // --- Default: .ics download ---
     const desc =
-      "Your free live MasterClass with David & Laurent.\\n\\nJoin here: " + join +
-      "\\n\\nCome with the role you're chasing in mind — the more specific you are, the more you walk away with.";
+      "Your free 90-minute live MasterClass with David & Laurent.\\n\\nJoin here: " + join +
+      "\\n\\nCome with the role you're chasing in mind—the more specific you are, the more you walk away with.";
     const lines = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
