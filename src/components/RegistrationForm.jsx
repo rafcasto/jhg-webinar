@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui.jsx";
 import CountrySelect from "./CountrySelect.jsx";
-import { registerLead, enrollInKit, zoomRegister, readSource, webinarRsvpTag } from "../lib/api.js";
+import { registerLead, enrollInKit, zoomRegister, readSource, readRef, recordReferral, webinarRsvpTag } from "../lib/api.js";
 import { formatEvent } from "../lib/format.js";
 import { countryName, dialFor, localeCountry, detectCountry } from "../lib/countries.js";
 
@@ -56,12 +56,15 @@ export default function RegistrationForm({ events = [], content = {}, variant = 
       sessionStorage.setItem("jhg_lead_id", leadId);
       sessionStorage.setItem("jhg_email", f.email);
       enrollInKit(leadId);
+      // If they arrived via a referral link, attribute it to the referrer.
+      const refCode = readRef();
+      if (refCode) recordReferral({ new_email: f.email, ref_code: refCode });
       if (chosen) zoomRegister({
         meeting_id: chosen.zoom_meeting_id, occurrence_id: chosen.occurrence_id,
         email: f.email, first_name: f.first_name, last_name: f.last_name,
       });
       onDone?.();
-      navigate("/quiz");
+      navigate("/registered");
     } catch (e2) {
       console.error(e2);
       setErr(e2.message || "Something went wrong. Please try again.");

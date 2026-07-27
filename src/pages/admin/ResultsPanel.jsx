@@ -18,7 +18,7 @@ export default function ResultsPanel() {
   const stages = ["all", ...new Set(rows.map((r) => r.stage))];
 
   const csv = () => {
-    const head = ["first_name", "last_name", "email", "stage", "tag", "source", "score", "archetype", "location", "created_at"];
+    const head = ["first_name", "last_name", "email", "stage", "tag", "source", "score", "grade", "archetype", "obstacle", "referred_by", "location", "created_at"];
     const lines = filtered.map((l) => head.map((k) => JSON.stringify(l[k] ?? "")).join(","));
     const blob = new Blob([[head.join(","), ...lines].join("\n")], { type: "text/csv" });
     const a = document.createElement("a");
@@ -40,7 +40,7 @@ export default function ResultsPanel() {
       <div className="adm-panel" style={{ marginTop: 18 }}>
         <table className="admin-table">
           <thead>
-            <tr><th>Name</th><th>Email</th><th>Stage</th><th>Tag</th><th>Source</th><th>Score</th><th>Archetype</th><th>Location</th><th>Date</th></tr>
+            <tr><th>Name</th><th>Email</th><th>Stage</th><th>Tag</th><th>Source</th><th>Score</th><th>Grade</th><th>Archetype</th><th>Location</th><th>Date</th></tr>
           </thead>
           <tbody>
             {filtered.map((l) => (
@@ -51,12 +51,13 @@ export default function ResultsPanel() {
                 <td style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>{l.tag || "—"}</td>
                 <td>{l.source || "—"}</td>
                 <td><b>{l.score}</b></td>
+                <td>{l.grade || "—"}</td>
                 <td>{l.archetype || "—"}</td>
                 <td>{l.location || "—"}</td>
                 <td>{new Date(l.created_at).toLocaleString()}</td>
               </tr>
             ))}
-            {filtered.length === 0 && <tr><td colSpan={9} className="muted">No results.</td></tr>}
+            {filtered.length === 0 && <tr><td colSpan={10} className="muted">No results.</td></tr>}
           </tbody>
         </table>
       </div>

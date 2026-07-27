@@ -1,0 +1,71 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import SiteFooter from "../components/SiteFooter.jsx";
+import { Button } from "../components/ui.jsx";
+import { getContent, getNextEvent } from "../lib/api.js";
+import { formatEvent } from "../lib/format.js";
+
+/**
+ * /registered — the lead-magnet gate shown immediately after registration.
+ * Confirms the seat, then trades the free "Career Compass" (a Kit email
+ * sequence delivered after the quiz) for completing the quiz.
+ */
+export default function Registered() {
+  const navigate = useNavigate();
+  const [c, setC] = useState(null);
+  const [event, setEvent] = useState(null);
+  const email = sessionStorage.getItem("jhg_email");
+
+  useEffect(() => {
+    if (!email) { navigate("/"); return; }
+    (async () => {
+      try {
+        const [content, ev] = await Promise.all([getContent("registered"), getNextEvent()]);
+        setC(content);
+        setEvent(ev);
+      } catch (e) { console.error(e); setC({}); }
+    })();
+  }, [email, navigate]);
+
+  if (!c) return <div className="page-loading">Loading…</div>;
+
+  const T = (k, def) => (c[k] && c[k].length ? c[k] : def);
+  const when = formatEvent(event);
+
+  return (
+    <>
+      <section className="ty-hero">
+        <img className="ty-hero__hand" src="/assets/logo-hand.png" alt="" />
+        <div className="container">
+          <div className="ty-check">✓</div>
+          <div className="ty-eyebrow">{T("eyebrow", "YOU'RE REGISTERED")}</div>
+          <h1>{T("title", "You're In. One Last Step.")}</h1>
+          <p>{T("subtitle", "Your seat is saved — check your inbox for the confirmation. Before you go, claim the free resource below.")}</p>
+          {when && (
+            <p style={{ marginTop: 14, color: "#fff", fontWeight: 600 }}>
+              📅 {when.date} · 🕒 {when.time} ({when.tz})
+            </p>
+          )}
+        </div>
+      </section>
+
+      <section className="ty-steps">
+        <div className="container">
+          <div className="gate-card">
+            <div className="gate-card__icon">🧭</div>
+            <h2 className="gate-card__title">{T("magnet_name", "The JobHacker Career Compass")}</h2>
+            <p className="gate-card__desc">
+              {T("magnet_desc", "Answer 5 quick questions and we'll send you a personalised game plan for your situation — plus the exact resource that fits where you're stuck.")}
+            </p>
+            <Button variant="primary" size="lg" onClick={() => navigate("/quiz")}>
+              {T("cta_label", "Claim My Free Compass →")}
+            </Button>
+            <p className="gate-card__foot">{T("footnote", "Takes less than 60 seconds. Your gift arrives by email right after.")}</p>
+          </div>
+        </div>
+      </section>
+
+      <SiteFooter />
+    </>
+  );
+}

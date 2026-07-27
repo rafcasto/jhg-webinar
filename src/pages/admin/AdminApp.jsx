@@ -7,6 +7,7 @@ import LeadFormPanel from "./LeadFormPanel.jsx";
 import QuestionsPanel from "./QuestionsPanel.jsx";
 import ResultsPanel from "./ResultsPanel.jsx";
 import ABTestPanel from "./ABTestPanel.jsx";
+import WinnersPanel from "./WinnersPanel.jsx";
 import AdminLogin from "./AdminLogin.jsx";
 
 const TABS = [
@@ -17,7 +18,9 @@ const TABS = [
   { to: "/admin/abtest", label: "A/B Test" },
   { to: "/admin/leadform", label: "Lead Form" },
   { to: "/admin/questions", label: "Questions" },
+  { to: "/admin/pages", label: "Thank-you Pages" },
   { to: "/admin/results", label: "Results" },
+  { to: "/admin/winners", label: "Call Winners" },
 ];
 
 export default function AdminApp() {
@@ -92,7 +95,10 @@ export default function AdminApp() {
           <Route path="abtest" element={<ABTestPanel />} />
           <Route path="leadform" element={<LeadFormPanel />} />
           <Route path="questions" element={<QuestionsPanel />} />
+          <Route path="pages" element={
+            <ContentEditor title="Thank-you Pages — registered & referral" pages={["registered", "referral"]} />} />
           <Route path="results" element={<ResultsPanel />} />
+          <Route path="winners" element={<WinnersPanel />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </main>

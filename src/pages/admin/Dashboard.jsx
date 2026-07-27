@@ -17,8 +17,11 @@ export default function Dashboard() {
     const actEmails = new Set(act.map((r) => r.email));
     const scores = act.map((r) => r.score || 0);
     const avg = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-    const hot = act.filter((r) => r.score >= 55).length;
-    const warm = act.filter((r) => r.score >= 30 && r.score < 55).length;
+    const hot = act.filter((r) => r.score >= 5).length;
+    const warm = act.filter((r) => r.score >= 3 && r.score < 5).length;
+    const gradeCount = {};
+    act.forEach((r) => { if (r.grade) gradeCount[r.grade] = (gradeCount[r.grade] || 0) + 1; });
+    const grades = ["A", "B", "C", "D", "E"].map((g) => `${g}:${gradeCount[g] || 0}`).join("  ");
     const archCount = {};
     act.forEach((r) => { if (r.archetype) archCount[r.archetype] = (archCount[r.archetype] || 0) + 1; });
     const topArch = Object.entries(archCount).sort((a, b) => b[1] - a[1])[0];
@@ -27,7 +30,7 @@ export default function Dashboard() {
       completed: actEmails.size,
       rate: emails.size ? Math.round((actEmails.size / emails.size) * 100) : 0,
       scored: act.filter((r) => r.score > 0).length,
-      avg, hot, warm,
+      avg, hot, warm, grades,
       topArch: topArch ? `${topArch[0]} (${topArch[1]})` : "—",
     };
   }, [rows]);
@@ -48,17 +51,18 @@ export default function Dashboard() {
       <div className="adm-panel">
         <h2 className="adm-panel__h">Lead score &amp; segments</h2>
         <div className="adm-grid4">
-          <Mini num={m.avg.toFixed(1)} label="Avg lead score" />
-          <Mini num={m.hot} label="Hot (≥55)" />
-          <Mini num={m.warm} label="Warm (30–54)" />
+          <Mini num={m.avg.toFixed(1)} label="Avg readiness (0–6)" />
+          <Mini num={m.hot} label="Hot (≥5)" />
+          <Mini num={m.warm} label="Warm (3–4)" />
           <Mini num={m.topArch} label="Top archetype" />
         </div>
+        <p className="muted" style={{ margin: "14px 0 0", fontFamily: "var(--font-mono)", fontSize: 13 }}>Grades — {m.grades}</p>
       </div>
 
       <h2 className="adm-panel__h" style={{ marginTop: 8 }}>Recent submissions</h2>
       <table className="admin-table">
         <thead>
-          <tr><th>Name</th><th>Email</th><th>Stage</th><th>Score</th><th>Archetype</th><th>Source</th><th>Date</th></tr>
+          <tr><th>Name</th><th>Email</th><th>Stage</th><th>Score</th><th>Grade</th><th>Archetype</th><th>Source</th><th>Date</th></tr>
         </thead>
         <tbody>
           {rows.slice(0, 10).map((l) => (
@@ -67,12 +71,13 @@ export default function Dashboard() {
               <td>{l.email}</td>
               <td><span className={`pill pill--${l.stage === "acquisition" ? "B" : l.stage === "activation" ? "A" : "C"}`}>{l.stage}</span></td>
               <td><b>{l.score}</b></td>
+              <td>{l.grade || "—"}</td>
               <td>{l.archetype || "—"}</td>
               <td>{l.source || "—"}</td>
               <td>{new Date(l.created_at).toLocaleDateString()}</td>
             </tr>
           ))}
-          {rows.length === 0 && <tr><td colSpan={7} className="muted">No submissions yet.</td></tr>}
+          {rows.length === 0 && <tr><td colSpan={8} className="muted">No submissions yet.</td></tr>}
         </tbody>
       </table>
     </>

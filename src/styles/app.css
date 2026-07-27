@@ -618,3 +618,66 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
   .share-grid { grid-template-columns: 1fr; }
   .ty-step { flex-direction: column; gap: 12px; }
 }
+
+/* =============================================================
+   /registered — lead-magnet gate
+============================================================= */
+.ty-check {
+  width: 56px; height: 56px; border-radius: 999px; margin: 0 auto 20px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--jh-red); color: #fff; font-size: 26px; font-weight: 700;
+  box-shadow: 0 8px 22px rgba(194,0,31,.35);
+}
+.ty-eyebrow {
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--rb-orange);
+  margin-bottom: 12px;
+}
+.gate-card {
+  max-width: 560px; margin: 0 auto; text-align: center; background: #fff;
+  border: 1px solid var(--jh-line); border-radius: 20px; padding: 40px 32px;
+  box-shadow: var(--shadow-2);
+}
+.gate-card__icon { font-size: 48px; line-height: 1; }
+.gate-card__title { font-family: var(--font-display); font-size: 26px; font-weight: 700; margin: 14px 0 10px; }
+.gate-card__desc { font-size: 15px; color: var(--fg-2); margin: 0 auto 24px; max-width: 440px; }
+.gate-card__foot { font-size: 12px; color: var(--fg-3); font-style: italic; margin: 16px 0 0; }
+
+/* =============================================================
+   /referral — share-to-win
+============================================================= */
+.ref-wrap { max-width: 720px; }
+.ref-win {
+  background: var(--jh-red-soft); border: 1px solid var(--jh-red);
+  border-radius: 16px; padding: 24px 28px; margin-bottom: 24px; text-align: center;
+}
+.ref-win h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--jh-red); margin: 0 0 8px; }
+.ref-win p { color: var(--fg-2); margin: 0; }
+.ref-card {
+  background: #fff; border: 1px solid var(--jh-line); border-radius: 20px;
+  padding: 32px; box-shadow: var(--shadow-1);
+}
+.ref-card__title { font-family: var(--font-display); font-size: 24px; font-weight: 700; margin: 0 0 8px; }
+.ref-card__body { font-size: 15px; color: var(--fg-2); margin: 0 0 22px; }
+.ref-progress { margin: 0 0 26px; }
+.ref-progress__bar { height: 12px; background: var(--jh-line); border-radius: 999px; overflow: hidden; }
+.ref-progress__fill { height: 100%; background: var(--jh-red); border-radius: 999px; transition: width 400ms var(--ease-out); }
+.ref-progress__label { margin-top: 8px; font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--fg-3); }
+.ref-share__h { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin: 0 0 14px; }
+.ref-field { margin-bottom: 16px; }
+.ref-copyrow { display: flex; gap: 10px; }
+.ref-copyrow input { flex: 1; }
+.ref-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.ref-note { font-size: 12px; color: var(--fg-3); margin: 14px 0 0; }
+
+/* Open-text / "other" answer field on the quiz */
+.quiz-textarea {
+  width: 100%; font-family: var(--font-body); font-size: 16px; color: var(--jh-ink);
+  padding: 14px 16px; border: 2px solid var(--jh-line-2); border-radius: 12px;
+  background: #fff; resize: vertical; box-sizing: border-box;
+}
+.quiz-textarea:focus { border-color: var(--jh-red); outline: none; box-shadow: 0 0 0 4px rgba(194,0,31,.12); }
+
+@media (max-width: 720px) {
+  .ref-copyrow { flex-direction: column; }
+}

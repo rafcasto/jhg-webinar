@@ -27,7 +27,7 @@ export async function getCtas(page) {
 export async function getQuiz() {
   const { data: questions, error } = await supabase
     .from("quiz_questions")
-    .select("id,position,prompt,help_text,type,scored")
+    .select("id,position,prompt,help_text,type,scored,required")
     .eq("enabled", true)
     .order("position");
   if (error) throw error;
@@ -37,7 +37,7 @@ export async function getQuiz() {
 
   const { data: options, error: e2 } = await supabase
     .from("quiz_options")
-    .select("id,question_id,position,label,value")
+    .select("id,question_id,position,label,value,is_other")
     .in("question_id", ids)
     .eq("enabled", true)
     .order("position");
@@ -82,6 +82,12 @@ export function readSource() {
   return p.get("source") || p.get("utm_source") || "direct";
 }
 
+/** Referral code from ?ref= (opaque code that maps to a referrer's email). */
+export function readRef() {
+  const p = new URLSearchParams(window.location.search);
+  return p.get("ref") || null;
+}
+
 /** Tag for a webinar RSVP, e.g. EVENT->RSVP->WEBINAR-2026-06-25. */
 export function webinarRsvpTag(event) {
   let datePart = "TBD";
@@ -89,8 +95,8 @@ export function webinarRsvpTag(event) {
   return `EVENT->RSVP->WEBINAR-${datePart}`;
 }
 
-/** Tag for a quiz submission. */
-export const QUIZ_TAG = "EVENT->ANSWER->WEBINAR-QUIZ";
+/** Tag for a quiz (Compass) completion. */
+export const QUIZ_TAG = "EVENT->QUIZ_COMPLETE->TRACKER";
 
 /** Step 1 — record the RSVP (acquisition) event. Returns event row id. */
 export async function registerLead({ first_name, last_name, email, location, phone, source, tag, variant }) {
@@ -109,12 +115,14 @@ export async function registerLead({ first_name, last_name, email, location, pho
 }
 
 /** Step 2 — record the quiz (activation) event + score. Returns { id, score }. */
-export async function completeQuiz({ email, answers, source }) {
+export async function completeQuiz({ email, answers, source, other = {}, q6 = null }) {
   const { data, error } = await supabase.rpc("complete_quiz", {
     p_email: email,
     p_answers: answers,
     p_source: source || null,
     p_tag: QUIZ_TAG,
+    p_other: other || {},
+    p_q6: q6 || null,
   });
   if (error) throw error;
   return Array.isArray(data) ? data[0] : data;
@@ -148,6 +156,48 @@ export async function zoomRegister({ meeting_id, occurrence_id, email, first_nam
   } catch (e) {
     console.warn("[zoom-register] skipped:", e.message);
   }
+}
+
+// ---------- Referral engine ----------
+
+/**
+ * Record a referral when a NEW registrant arrived via someone's ?ref= code.
+ * Writes a REFERRAL-stage attribution row server-side. If the referrer crossed
+ * the target this returns newly_won=true — we then tag them in Kit so their
+ * (Kit-side) booking automation fires. Fire-and-forget; never blocks the funnel.
+ */
+export async function recordReferral({ new_email, ref_code }) {
+  if (!ref_code) return null;
+  try {
+    const { data, error } = await supabase.rpc("record_referral", {
+      p_new_email: new_email,
+      p_ref_code: ref_code,
+    });
+    if (error) { console.warn("[record_referral]", error.message); return null; }
+    const row = Array.isArray(data) ? data[0] : data;
+    if (row?.newly_won && row?.referrer_email) fireReferralWin(row.referrer_email);
+    return row || null;
+  } catch (e) {
+    console.warn("[record_referral] skipped:", e.message);
+    return null;
+  }
+}
+
+/** Tag a referral winner in Kit (their Kit automation books the mentor call). */
+export async function fireReferralWin(referrer_email) {
+  try {
+    const { error } = await supabase.functions.invoke("referral-win", { body: { referrer_email } });
+    if (error) console.warn("[referral-win] not available yet:", error.message);
+  } catch (e) {
+    console.warn("[referral-win] skipped:", e.message);
+  }
+}
+
+/** The freshly-registered person's own referral progress + share code. */
+export async function getReferralProgress(email) {
+  const { data, error } = await supabase.rpc("get_referral_progress", { p_email: email });
+  if (error) throw error;
+  return Array.isArray(data) ? data[0] : data; // { code, referral_count, target, won }
 }
 
 // ---------- A/B layout test (admin) ----------

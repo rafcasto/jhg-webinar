@@ -102,11 +102,20 @@ Deno.serve(async (req) => {
       await kit(`/tags/${tagId}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
     }
 
-    // 3) welcome + value-email sequence (immediate welcome pushes calendar scheduling).
-    //    Only enroll RSVPs (not quiz-only rows) so we don't welcome non-registrants.
+    // 3a) welcome + value-email sequence (immediate welcome pushes calendar scheduling).
+    //     Only enroll RSVPs (not quiz-only rows) so we don't welcome non-registrants.
     const seq = Deno.env.get("KIT_SEQUENCE_ID");
     if (seq && md) {
       await kit(`/sequences/${seq}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
+    }
+
+    // 3b) lead-magnet delivery: when the person completes the Compass quiz
+    //     (activation stage), enroll them in the gift sequence so Kit emails
+    //     their personalised Career Compass. The QUIZ_COMPLETE tag is applied
+    //     above too, so a tag-based Kit automation works as an alternative.
+    const quizSeq = Deno.env.get("KIT_QUIZ_SEQUENCE_ID");
+    if (quizSeq && lead.stage === "activation") {
+      await kit(`/sequences/${quizSeq}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
     }
 
     return json({ ok: true, kit_subscriber_id: subscriber.id, tags: tagNames, event: eventFields });
