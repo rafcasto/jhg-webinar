@@ -646,16 +646,23 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 .ref-block { margin-top: 40px; text-align: center; }
 .ref-block__title { font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--jh-ink); margin: 0 0 8px; }
 .ref-block__body { font-size: 15px; color: var(--fg-2); margin: 0 auto 22px; max-width: 480px; }
-.ref-progress { margin: 0 auto 26px; max-width: 480px; }
-.ref-progress__bar { height: 12px; background: var(--jh-line); border-radius: 999px; overflow: hidden; }
-.ref-progress__fill { height: 100%; background: var(--jh-red); border-radius: 999px; transition: width 400ms var(--ease-out); }
-.ref-progress__label { margin-top: 8px; font-family: var(--font-display); font-size: 13px; font-weight: 600; color: var(--fg-3); }
-.ref-share__h { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin: 0 0 14px; }
-.ref-field { margin-bottom: 16px; text-align: left; }
+.ref-field { margin: 0 auto 16px; max-width: 480px; text-align: left; }
 .ref-copyrow { display: flex; gap: 10px; }
 .ref-copyrow input { flex: 1; }
-.ref-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-.ref-note { font-size: 12px; color: var(--fg-3); margin: 14px 0 0; }
+/* Primary LinkedIn button — constrained to the same column as the fields */
+.ref-block > .btn--primary { display: flex; margin: 0 auto; max-width: 480px; }
+/* "or you can:" divider */
+.ref-or { display: flex; align-items: center; gap: 14px; max-width: 480px; margin: 22px auto 16px; color: var(--fg-3); }
+.ref-or::before, .ref-or::after { content: ""; flex: 1; height: 1px; background: var(--jh-line); }
+.ref-or span { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+/* Copy-paste email template box */
+.ref-emailbox { max-width: 480px; margin: 0 auto; text-align: left; }
+.ref-emailtext {
+  width: 100%; box-sizing: border-box; margin: 6px 0 10px;
+  font-family: var(--font-body); font-size: 14px; line-height: 1.5;
+  color: var(--jh-ink); resize: vertical;
+}
+.ref-note { font-size: 12px; color: var(--fg-3); margin: 18px auto 0; max-width: 480px; }
 
 /* Open-text / "other" answer field on the quiz */
 .quiz-textarea {
