@@ -6,11 +6,13 @@ import { getContent, getReferralProgress } from "../lib/api.js";
 
 const origin = () => (typeof window !== "undefined" ? window.location.origin : "");
 
-// LinkedIn's feed `?text=` param is silently dropped, so the referral link
-// never ended up in the post. share-offsite attaches the URL itself as the
-// shared content — guaranteeing the ?ref= link is what gets posted.
-const linkedInShare = (url) =>
-  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+// Feed composer with a pre-filled caption. share-offsite attaches a link card
+// but can't pre-fill any text; the feed composer pre-fills the caption, and
+// because the caption ends with the ?ref= link, the referral link travels
+// inside the draft (LinkedIn auto-attaches its preview). We also copy the same
+// caption on click so it can be pasted if LinkedIn opens the composer blank.
+const linkedInShare = (text) =>
+  `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
 
 function useCopy() {
   const [copied, setCopied] = useState("");
@@ -146,7 +148,7 @@ export default function Referral() {
 
               {/* 5 — primary LinkedIn share: attaches the ?ref= link, copies the caption */}
               {ready ? (
-                <Button variant="primary" block href={linkedInShare(link)} target="_blank" rel="noreferrer"
+                <Button variant="primary" block href={linkedInShare(post)} target="_blank" rel="noreferrer"
                   onClick={() => copy(post, "post")}>
                   {val("cta_label", "Share on LinkedIn →")}
                 </Button>
@@ -157,8 +159,8 @@ export default function Referral() {
               )}
               <p className="ref-hint">
                 {copied === "post"
-                  ? "Caption copied — paste it above your link, then Post."
-                  : "Your referral link attaches automatically. A ready-to-paste caption copies when you click."}
+                  ? "Draft opened (and copied). If the box is blank, just paste — your referral link is in it."
+                  : "Opens a draft post with your referral link already in it."}
               </p>
 
               {/* 6 — or copy the templated email */}
