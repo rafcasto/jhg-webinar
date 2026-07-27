@@ -209,7 +209,8 @@ begin
   if v_code is not null then return v_code; end if;
 
   loop
-    v_code := lower(substr(encode(gen_random_bytes(6), 'hex'), 1, 8));
+    -- Core functions only (no pgcrypto): avoids the extensions-schema search_path issue.
+    v_code := substr(md5(random()::text || clock_timestamp()::text || coalesce(p_email,'')), 1, 8);
     begin
       insert into referral_codes (code, email) values (v_code, lower(p_email));
       return v_code;
