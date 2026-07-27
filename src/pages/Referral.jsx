@@ -78,8 +78,8 @@ export default function Referral() {
         <div className="ty-inner ref-wrap">
           <div className="ty-check">🎉</div>
           <div className="ty-eyebrow">{T("eyebrow", "ALL DONE")}</div>
-          <h1 className="ty-title">{T("title", "Your Compass Is On Its Way.")}</h1>
-          <p className="ty-sub">{T("subtitle", "Check your inbox in the next few minutes for your personalised game plan. While you wait — here's how to unlock a free 1-to-1 call with a JobHackers mentor.")}</p>
+          <h1 className="ty-title">{T("title", "Your 5 Prompts Are On Their Way.")}</h1>
+          <p className="ty-sub">{T("subtitle", "Check your inbox in the next few minutes for your copy-paste prompt playbook. While you wait — here's how to unlock a free 1-to-1 call with a JobHackers mentor.")}</p>
 
           {won && (
             <div className="ref-win">

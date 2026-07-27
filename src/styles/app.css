@@ -630,7 +630,6 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 }
 /* Lead-magnet block — blends into the page, no card, no border */
 .ty-magnet { margin-top: 40px; text-align: center; }
-.ty-magnet__icon { font-size: 48px; line-height: 1; }
 .ty-magnet__title { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--jh-ink); margin: 14px 0 10px; }
 .ty-magnet__desc { font-size: 15px; color: var(--fg-2); margin: 0 auto 24px; max-width: 440px; }
 .ty-magnet__foot { font-size: 12px; color: var(--fg-3); font-style: italic; margin: 16px 0 0; }

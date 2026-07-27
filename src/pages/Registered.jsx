@@ -7,8 +7,8 @@ import { formatEvent } from "../lib/format.js";
 
 /**
  * /registered — the lead-magnet gate shown immediately after registration.
- * Confirms the seat, then trades the free "Career Compass" (a Kit email
- * sequence delivered after the quiz) for completing the quiz.
+ * Confirms the seat, then trades the free "Find Your Target Role in 5 Prompts"
+ * playbook (a Kit email delivered after the quiz) for completing the quiz.
  */
 export default function Registered() {
   const navigate = useNavigate();
@@ -45,13 +45,12 @@ export default function Registered() {
           )}
 
           <div className="ty-magnet">
-            <div className="ty-magnet__icon">🧭</div>
-            <h2 className="ty-magnet__title">{T("magnet_name", "The JobHacker Career Compass")}</h2>
+            <h2 className="ty-magnet__title">{T("magnet_name", "Find Your Target Role in 5 Prompts")}</h2>
             <p className="ty-magnet__desc">
-              {T("magnet_desc", "Answer 5 quick questions and we'll send you a personalised game plan for your situation — plus the exact resource that fits where you're stuck.")}
+              {T("magnet_desc", "Answer 5 quick questions and we'll send you the copy-paste AI prompts that turn \"I don't know what to do\" into a shortlist of best-fit roles — in under an hour.")}
             </p>
             <Button variant="primary" size="lg" onClick={() => navigate("/quiz")}>
-              {T("cta_label", "Claim My Free Compass →")}
+              {T("cta_label", "Send Me The 5 Prompts →")}
             </Button>
             <p className="ty-magnet__foot">{T("footnote", "Takes less than 60 seconds. Your gift arrives by email right after.")}</p>
           </div>
