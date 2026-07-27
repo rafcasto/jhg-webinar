@@ -12,8 +12,8 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 .btn { font-family: var(--font-display); font-weight: 600; font-size: 15px; padding: 13px 22px;
   border-radius: 10px; border: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
   transition: all 200ms cubic-bezier(.2,.7,.2,1); text-decoration: none; line-height: 1; }
-.btn--primary { background: var(--jh-red); color: #fff; box-shadow: 0 6px 18px rgba(194,0,31,.25); }
-.btn--primary:hover { background: #8a0016; transform: translateY(-1px); box-shadow: 0 8px 22px rgba(194,0,31,.32); }
+.btn--primary { background: var(--jh-red); color: #fff; }
+.btn--primary:hover { background: #8a0016; transform: translateY(-1px); }
 .btn--primary:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 .btn--secondary { background: #fff; color: var(--jh-ink); border: 1.5px solid var(--jh-ink); }
 .btn--secondary:hover { background: var(--jh-ink); color: #fff; }
@@ -649,9 +649,8 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 .ref-field { margin: 0 auto 16px; max-width: 480px; text-align: left; }
 .ref-copyrow { display: flex; gap: 10px; }
 .ref-copyrow input { flex: 1; }
-/* Primary LinkedIn button — constrained to the same column as the fields, no shadow */
-.ref-block > .btn--primary,
-.ref-block > .btn--primary:hover { display: flex; margin: 0 auto; max-width: 480px; box-shadow: none; }
+/* Primary LinkedIn button — constrained to the same column as the fields */
+.ref-block > .btn--primary { display: flex; margin: 0 auto; max-width: 480px; }
 /* "or you can:" divider */
 .ref-or { display: flex; align-items: center; gap: 14px; max-width: 480px; margin: 22px auto 16px; color: var(--fg-3); }
 .ref-or::before, .ref-or::after { content: ""; flex: 1; height: 1px; background: var(--jh-line); }
