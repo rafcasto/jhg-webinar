@@ -621,7 +621,6 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
   width: 56px; height: 56px; border-radius: 999px; margin: 0 auto 20px;
   display: flex; align-items: center; justify-content: center;
   background: var(--jh-red); color: #fff; font-size: 26px; font-weight: 700;
-  box-shadow: 0 8px 22px rgba(194,0,31,.35);
 }
 .ty-eyebrow {
   font-family: var(--font-display); font-size: 13px; font-weight: 600;

@@ -29,7 +29,9 @@ export default function Registered() {
 
   if (!c) return <div className="page-loading">Loading…</div>;
 
-  const T = (k, def) => (c[k] && c[k].length ? c[k] : def);
+  // Fall back to the default only when the CMS has no row for this key.
+  // If an admin clears a field (empty string), render it empty — don't re-inject the default.
+  const T = (k, def) => (Object.prototype.hasOwnProperty.call(c, k) ? (c[k] ?? "") : def);
   const when = formatEvent(event);
 
   return (
