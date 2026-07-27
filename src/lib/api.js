@@ -134,8 +134,9 @@ export async function completeQuiz({ email, answers, source, other = {}, q6 = nu
  */
 export async function enrollInKit(eventId) {
   try {
-    const { error } = await supabase.functions.invoke("kit-enroll", { body: { lead_id: eventId } });
+    const { data, error } = await supabase.functions.invoke("kit-enroll", { body: { lead_id: eventId } });
     if (error) console.warn("[kit-enroll] not available yet:", error.message);
+    else if (data?.warnings?.length) console.warn("[kit-enroll] enrollment warnings:", data.warnings);
   } catch (e) {
     console.warn("[kit-enroll] skipped:", e.message);
   }

@@ -1,7 +1,7 @@
 // Edge Function: kit-enroll
 // Called after a lead event is recorded (RSVP or quiz). Subscribes the person
 // in Kit and applies the event tag (e.g. EVENT->RSVP->WEBINAR-2026-06-25 or
-// EVENT->ANSWER->WEBINAR-QUIZ), plus a source tag and custom fields.
+// EVENT->QUIZ_COMPLETE->TRACKER), plus a source tag and custom fields.
 //
 // For webinar RSVPs it also looks up the matching occurrence in webinar_events
 // (the tag encodes the date) and stamps calendar details onto the subscriber:
@@ -10,10 +10,14 @@
 // so its "add to calendar" links are correct per-person.
 //
 // Secrets: PROJECT_URL, SERVICE_KEY, KIT_API_KEY
-//          KIT_SEQUENCE_ID (the webinar show-up sequence: welcome + value email)
+//          KIT_SEQUENCE_ID       (webinar show-up sequence: welcome + value email)
+//          KIT_QUIZ_SEQUENCE_ID  (lead-magnet gift sequence, enrolled on quiz done)
 //
 // Invoke:  supabase.functions.invoke('kit-enroll', { body: { lead_id } })
 //          where lead_id is a jobhackers_leads row id.
+//
+// The response includes `welcome_enrolled`, `quiz_enrolled` and a `warnings[]`
+// array so enrollment failures are visible instead of being silently swallowed.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -53,6 +57,8 @@ Deno.serve(async (req) => {
     const { data: lead, error } = await admin
       .from("jobhackers_leads").select("*").eq("id", lead_id).single();
     if (error || !lead) return json({ error: "lead not found" }, 404);
+
+    const warnings: string[] = [];
 
     // Look up the webinar occurrence this RSVP is for (the tag encodes the date),
     // so we can attach calendar details for the per-person welcome email.
@@ -98,28 +104,61 @@ Deno.serve(async (req) => {
     // 2) apply the event tag + a source tag
     const tagNames = [lead.tag, `source-${lead.source || "direct"}`].filter(Boolean);
     for (const name of tagNames) {
-      const tagId = await ensureTag(name);
-      await kit(`/tags/${tagId}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
+      try {
+        const tagId = await ensureTag(name);
+        await kit(`/tags/${tagId}/subscribers/${subscriber.id}`, { method: "POST" });
+      } catch (e) {
+        warnings.push(`tag "${name}": ${String(e)}`);
+      }
     }
 
     // 3a) welcome + value-email sequence (immediate welcome pushes calendar scheduling).
     //     Only enroll RSVPs (not quiz-only rows) so we don't welcome non-registrants.
     const seq = Deno.env.get("KIT_SEQUENCE_ID");
+    let welcome_enrolled = false;
     if (seq && md) {
-      await kit(`/sequences/${seq}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
+      try {
+        await kit(`/sequences/${seq}/subscribers/${subscriber.id}`, { method: "POST" });
+        welcome_enrolled = true;
+      } catch (e) {
+        warnings.push(`welcome sequence ${seq}: ${String(e)}`);
+      }
     }
 
-    // 3b) lead-magnet delivery: when the person completes the Compass quiz
-    //     (activation stage), enroll them in the gift sequence so Kit emails
-    //     their personalised Career Compass. The QUIZ_COMPLETE tag is applied
-    //     above too, so a tag-based Kit automation works as an alternative.
+    // 3b) lead-magnet delivery: when the person completes the quiz (activation
+    //     stage), enroll them in the gift sequence so Kit emails their
+    //     "Find Your Target Role in 5 Prompts" playbook. The QUIZ_COMPLETE tag
+    //     is applied above too, so a tag-based Kit automation works as well.
     const quizSeq = Deno.env.get("KIT_QUIZ_SEQUENCE_ID");
-    if (quizSeq && lead.stage === "activation") {
-      await kit(`/sequences/${quizSeq}/subscribers/${subscriber.id}`, { method: "POST" }).catch(() => {});
+    let quiz_enrolled = false;
+    if (lead.stage === "activation") {
+      if (!quizSeq) {
+        warnings.push("KIT_QUIZ_SEQUENCE_ID is not set — quiz-completer not enrolled in the gift sequence");
+      } else {
+        try {
+          await kit(`/sequences/${quizSeq}/subscribers/${subscriber.id}`, { method: "POST" });
+          quiz_enrolled = true;
+        } catch (e) {
+          warnings.push(`quiz sequence ${quizSeq}: ${String(e)}`);
+        }
+      }
     }
 
-    return json({ ok: true, kit_subscriber_id: subscriber.id, tags: tagNames, event: eventFields });
+    if (warnings.length) console.error("[kit-enroll] warnings:", JSON.stringify(warnings));
+
+    return json({
+      ok: true,
+      kit_subscriber_id: subscriber.id,
+      subscriber_state: subscriber.state ?? null,
+      stage: lead.stage,
+      tags: tagNames,
+      welcome_enrolled,
+      quiz_enrolled,
+      warnings,
+      event: eventFields,
+    });
   } catch (e) {
+    console.error("[kit-enroll] fatal:", String(e));
     return json({ error: String(e) }, 500);
   }
 });
