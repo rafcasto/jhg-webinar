@@ -649,8 +649,9 @@ html, body { margin: 0; background: var(--bg-page); color: var(--fg-1); font-fam
 .ref-field { margin: 0 auto 16px; max-width: 480px; text-align: left; }
 .ref-copyrow { display: flex; gap: 10px; }
 .ref-copyrow input { flex: 1; }
-/* Primary LinkedIn button — constrained to the same column as the fields */
-.ref-block > .btn--primary { display: flex; margin: 0 auto; max-width: 480px; }
+/* Primary LinkedIn button — constrained to the same column as the fields, no shadow */
+.ref-block > .btn--primary,
+.ref-block > .btn--primary:hover { display: flex; margin: 0 auto; max-width: 480px; box-shadow: none; }
 /* "or you can:" divider */
 .ref-or { display: flex; align-items: center; gap: 14px; max-width: 480px; margin: 22px auto 16px; color: var(--fg-3); }
 .ref-or::before, .ref-or::after { content: ""; flex: 1; height: 1px; background: var(--jh-line); }
