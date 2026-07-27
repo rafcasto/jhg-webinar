@@ -30,6 +30,21 @@ export default function RegistrationForm({ events = [], content = {}, variant = 
     return () => { alive = false; };
   }, []);
 
+  // Sessions load asynchronously, so the useState initializer above often runs
+  // before `events` exist and leaves `session` empty. Once events arrive, seed
+  // the default selection into state so the pre-selected date is actually
+  // recorded — without a re-select — while preserving any manual choice.
+  useEffect(() => {
+    if (!events.length) return;
+    setF((s) => {
+      const cur = Number(s.session);
+      const valid = s.session !== "" && Number.isInteger(cur) && cur >= 0 && cur < events.length;
+      if (valid) return s;
+      const idx = Math.min(Math.max(defaultSessionIdx, 0), events.length - 1);
+      return { ...s, session: String(idx) };
+    });
+  }, [events.length, defaultSessionIdx]);
+
   const dial = dialFor(f.country) || "44";
 
   async function submit(e) {
@@ -40,7 +55,8 @@ export default function RegistrationForm({ events = [], content = {}, variant = 
     if (events.length && f.session === "") return setErr("Please select a session.");
     if (!f.country) return setErr("Please select your location.");
 
-    const chosen = events[Number(f.session)] || null;
+    const chosen = events[Number(f.session)] ||
+      (events.length ? events[Math.min(Math.max(defaultSessionIdx, 0), events.length - 1)] : null);
     setBusy(true);
     try {
       const leadId = await registerLead({
