@@ -6,11 +6,11 @@ import { getContent, getReferralProgress } from "../lib/api.js";
 
 const origin = () => (typeof window !== "undefined" ? window.location.origin : "");
 
-// Opens the LinkedIn share composer pre-filled with the post text (and the
-// invite link inside it). `?shareActive=true&text=` is the only LinkedIn entry
-// point that reliably pre-populates the composer with custom copy.
-const linkedInShare = (text) =>
-  `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(text)}`;
+// LinkedIn's feed `?text=` param is silently dropped, so the referral link
+// never ended up in the post. share-offsite attaches the URL itself as the
+// shared content — guaranteeing the ?ref= link is what gets posted.
+const linkedInShare = (url) =>
+  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
 
 function useCopy() {
   const [copied, setCopied] = useState("");
@@ -144,9 +144,10 @@ export default function Referral() {
                 </div>
               </div>
 
-              {/* 5 — primary LinkedIn share (opens a pre-filled composer) */}
+              {/* 5 — primary LinkedIn share: attaches the ?ref= link, copies the caption */}
               {ready ? (
-                <Button variant="primary" block href={linkedInShare(post)} target="_blank" rel="noreferrer">
+                <Button variant="primary" block href={linkedInShare(link)} target="_blank" rel="noreferrer"
+                  onClick={() => copy(post, "post")}>
                   {val("cta_label", "Share on LinkedIn →")}
                 </Button>
               ) : (
@@ -154,6 +155,11 @@ export default function Referral() {
                   {val("cta_label", "Share on LinkedIn →")}
                 </Button>
               )}
+              <p className="ref-hint">
+                {copied === "post"
+                  ? "Caption copied — paste it above your link, then Post."
+                  : "Your referral link attaches automatically. A ready-to-paste caption copies when you click."}
+              </p>
 
               {/* 6 — or copy the templated email */}
               <div className="ref-or"><span>or you can:</span></div>
