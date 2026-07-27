@@ -72,28 +72,40 @@ Deno.serve(async (req) => {
 
     const warnings: string[] = [];
 
-    // Look up the webinar occurrence this RSVP is for (the tag encodes the date),
-    // so we can attach calendar details for the per-person welcome email.
+    // Resolve the webinar occurrence for the welcome email's calendar merge
+    // fields. Prefer the date encoded in the tag; if it's missing (e.g.
+    // WEBINAR-TBD because no session was picked) fall back to the next upcoming
+    // session so the welcome still goes out with real details.
     const eventFields: Record<string, string> = {};
     const md = (lead.tag || "").match(/WEBINAR-(\d{4}-\d{2}-\d{2})/);
+    let ev: any = null;
     if (md) {
       const day = md[1];
       const next = new Date(`${day}T00:00:00Z`);
       next.setUTCDate(next.getUTCDate() + 1);
-      const { data: ev } = await admin
+      const { data } = await admin
         .from("webinar_events").select("*")
         .gte("start_time", `${day}T00:00:00Z`)
         .lt("start_time", next.toISOString())
         .order("start_time", { ascending: true })
         .limit(1).maybeSingle();
-      if (ev) {
-        const start = new Date(ev.start_time);
-        eventFields.webinar_date = start.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: ev.timezone });
-        eventFields.webinar_time = start.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: ev.timezone });
-        eventFields.join_url = ev.join_url || "";
-        eventFields.occurrence_id = String(ev.occurrence_id ?? "");
-        eventFields.zoom_meeting_id = String(ev.zoom_meeting_id ?? "");
-      }
+      ev = data;
+    }
+    if (!ev && lead.stage === "acquisition") {
+      const { data } = await admin
+        .from("webinar_events").select("*")
+        .gt("start_time", new Date().toISOString())
+        .order("start_time", { ascending: true })
+        .limit(1).maybeSingle();
+      ev = data;
+    }
+    if (ev) {
+      const start = new Date(ev.start_time);
+      eventFields.webinar_date = start.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: ev.timezone });
+      eventFields.webinar_time = start.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: ev.timezone });
+      eventFields.join_url = ev.join_url || "";
+      eventFields.occurrence_id = String(ev.occurrence_id ?? "");
+      eventFields.zoom_meeting_id = String(ev.zoom_meeting_id ?? "");
     }
 
     // 1) upsert subscriber + custom fields
@@ -124,11 +136,12 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 3a) welcome + value-email sequence (immediate welcome pushes calendar scheduling).
-    //     Only enroll RSVPs (not quiz-only rows) so we don't welcome non-registrants.
+    // 3a) welcome + value-email sequence. Enroll every RSVP (acquisition stage),
+    //     whether or not a session date was captured — a dateless signup should
+    //     still be welcomed. Calendar merge fields use the resolved occurrence.
     const seq = Deno.env.get("KIT_SEQUENCE_ID");
     let welcome_enrolled = false;
-    if (seq && md) {
+    if (seq && lead.stage === "acquisition") {
       try {
         await kit(`/sequences/${seq}/subscribers/${subscriber.id}`, { method: "POST" });
         welcome_enrolled = true;
