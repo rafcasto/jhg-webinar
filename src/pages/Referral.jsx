@@ -74,17 +74,13 @@ export default function Referral() {
 
   return (
     <>
-      <section className="ty-hero">
-        <img className="ty-hero__hand" src="/assets/logo-hand.png" alt="" />
-        <div className="container">
-          <div className="ty-eyebrow">{T("eyebrow", "ALL DONE 🎉")}</div>
-          <h1>{T("title", "Your Compass Is On Its Way.")}</h1>
-          <p>{T("subtitle", "Check your inbox in the next few minutes for your personalised game plan. While you wait — here's how to unlock a free 1-to-1 call with a JobHackers mentor.")}</p>
-        </div>
-      </section>
+      <main className="ty-page">
+        <div className="ty-inner ref-wrap">
+          <div className="ty-check">🎉</div>
+          <div className="ty-eyebrow">{T("eyebrow", "ALL DONE")}</div>
+          <h1 className="ty-title">{T("title", "Your Compass Is On Its Way.")}</h1>
+          <p className="ty-sub">{T("subtitle", "Check your inbox in the next few minutes for your personalised game plan. While you wait — here's how to unlock a free 1-to-1 call with a JobHackers mentor.")}</p>
 
-      <section className="ty-steps">
-        <div className="container ref-wrap">
           {won && (
             <div className="ref-win">
               <h2>{T("success_title", "🎉 You did it — your mentor call is unlocked!")}</h2>
@@ -92,9 +88,9 @@ export default function Referral() {
             </div>
           )}
 
-          <div className="ref-card">
-            <h2 className="ref-card__title">{T("reward_title", "Refer friends. Win a 30-minute mentor call.")}</h2>
-            <p className="ref-card__body">{T("reward_body", "Share your invite link (or the templated email) with people who'd benefit. When enough of them register for the MasterClass, you earn a private 30-minute call with one of our Global mentors.")}</p>
+          <div className="ref-block">
+            <h2 className="ref-block__title">{T("reward_title", "Refer friends. Win a 30-minute mentor call.")}</h2>
+            <p className="ref-block__body">{T("reward_body", "Share your invite link (or the templated email) with people who'd benefit. When enough of them register for the MasterClass, you earn a private 30-minute call with one of our Global mentors.")}</p>
 
             {!won && (
               <div className="ref-progress">
@@ -127,7 +123,7 @@ export default function Referral() {
             <p className="ref-note">Copy the post, then paste it into LinkedIn. Anyone who registers through your link counts toward your call.</p>
           </div>
         </div>
-      </section>
+      </main>
 
       <SiteFooter />
     </>

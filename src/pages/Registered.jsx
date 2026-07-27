@@ -34,36 +34,29 @@ export default function Registered() {
 
   return (
     <>
-      <section className="ty-hero">
-        <img className="ty-hero__hand" src="/assets/logo-hand.png" alt="" />
-        <div className="container">
+      <main className="ty-page">
+        <div className="ty-inner">
           <div className="ty-check">✓</div>
           <div className="ty-eyebrow">{T("eyebrow", "YOU'RE REGISTERED")}</div>
-          <h1>{T("title", "You're In. One Last Step.")}</h1>
-          <p>{T("subtitle", "Your seat is saved — check your inbox for the confirmation. Before you go, claim the free resource below.")}</p>
+          <h1 className="ty-title">{T("title", "You're In. One Last Step.")}</h1>
+          <p className="ty-sub">{T("subtitle", "Your seat is saved — check your inbox for the confirmation. Before you go, claim the free resource below.")}</p>
           {when && (
-            <p style={{ marginTop: 14, color: "#fff", fontWeight: 600 }}>
-              📅 {when.date} · 🕒 {when.time} ({when.tz})
-            </p>
+            <p className="ty-date">📅 {when.date} · 🕒 {when.time} ({when.tz})</p>
           )}
-        </div>
-      </section>
 
-      <section className="ty-steps">
-        <div className="container">
-          <div className="gate-card">
-            <div className="gate-card__icon">🧭</div>
-            <h2 className="gate-card__title">{T("magnet_name", "The JobHacker Career Compass")}</h2>
-            <p className="gate-card__desc">
+          <div className="ty-magnet">
+            <div className="ty-magnet__icon">🧭</div>
+            <h2 className="ty-magnet__title">{T("magnet_name", "The JobHacker Career Compass")}</h2>
+            <p className="ty-magnet__desc">
               {T("magnet_desc", "Answer 5 quick questions and we'll send you a personalised game plan for your situation — plus the exact resource that fits where you're stuck.")}
             </p>
             <Button variant="primary" size="lg" onClick={() => navigate("/quiz")}>
               {T("cta_label", "Claim My Free Compass →")}
             </Button>
-            <p className="gate-card__foot">{T("footnote", "Takes less than 60 seconds. Your gift arrives by email right after.")}</p>
+            <p className="ty-magnet__foot">{T("footnote", "Takes less than 60 seconds. Your gift arrives by email right after.")}</p>
           </div>
         </div>
-      </section>
+      </main>
 
       <SiteFooter />
     </>
