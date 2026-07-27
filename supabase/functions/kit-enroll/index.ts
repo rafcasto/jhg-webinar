@@ -50,13 +50,25 @@ async function ensureTag(name: string): Promise<number> {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   try {
-    const { lead_id } = await req.json();
-    if (!lead_id) return json({ error: "lead_id required" }, 400);
+    // Accept a lead_id (used by the live funnel) OR an email (handy for testing).
+    // With an email, resolve the most recent matching lead; pass an optional
+    // stage ("acquisition" for an RSVP, "activation" for a quiz completer).
+    const { lead_id, email, stage } = await req.json();
+    if (!lead_id && !email) return json({ error: "lead_id or email required" }, 400);
 
     const admin = createClient(Deno.env.get("PROJECT_URL")!, Deno.env.get("SERVICE_KEY")!);
-    const { data: lead, error } = await admin
-      .from("jobhackers_leads").select("*").eq("id", lead_id).single();
-    if (error || !lead) return json({ error: "lead not found" }, 404);
+
+    let lead: any = null;
+    if (lead_id) {
+      const { data } = await admin.from("jobhackers_leads").select("*").eq("id", lead_id).maybeSingle();
+      lead = data;
+    } else {
+      let q = admin.from("jobhackers_leads").select("*").eq("email", String(email).toLowerCase());
+      if (stage) q = q.eq("stage", stage);
+      const { data } = await q.order("created_at", { ascending: false }).limit(1).maybeSingle();
+      lead = data;
+    }
+    if (!lead) return json({ error: "lead not found" }, 404);
 
     const warnings: string[] = [];
 
